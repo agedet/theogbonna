@@ -2,6 +2,8 @@ import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import './App.css'
 import LandingPage from './pages/LandingPage'
+import CheckoutPage from './pages/CheckoutPage'
+import SuccessPage from './pages/SuccessPage'
 
 /** Scrolls to the top of the page whenever the route changes. */
 function ScrollToTop() {
@@ -17,10 +19,9 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<LandingPage />} />
-        {/* <Route path="/checkout" element={<OnboardingForm />} />
-        <Route path="/success" element={<SuccessPage />} />
-        <Route path="/admin" element={<AdminDashboard />} /> */}
+        <Route path="/"         element={<LandingPage />}  />
+        <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/success"  element={<SuccessPage />}  />
       </Routes>
     </BrowserRouter>
   )
