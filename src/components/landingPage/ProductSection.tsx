@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import WrapperGele from '@/assets/wrapper-gele.jpeg';
-import Wrapper from '@/assets/wrapper-gele.jpeg';
+import Material1 from '@/assets/material1.png';
+import Material from '@/assets/material2.png';
 
 export default function ProductSection() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ export default function ProductSection() {
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            src={WrapperGele} 
+            src={Material1} 
             alt="Asoebi Fabric Lace" 
             className="w-4/5 rounded-2xl shadow-xl z-10 relative"
           />
@@ -25,7 +25,7 @@ export default function ProductSection() {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            src={Wrapper} 
+            src={Material} 
             alt="Asoebi Gele" 
             className="w-3/5 rounded-2xl shadow-2xl absolute -bottom-16 -right-4 border-4 border-slate-900"
           />

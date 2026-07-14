@@ -146,8 +146,8 @@ function ParticleCanvas() {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const LINE_1 = "A legacy of love, a lifetime of warmth.";
-const LINE_2_DIM = "Their hands guided us, their wisdom shaped us,";
-const LINE_2_LIT = "and their memories will forever illuminate our paths.";
+const LINE_2_DIM = "Their hands guided us, their wisdom shaped us.";
+// const LINE_2_LIT = "and their memories will forever illuminate our paths.";
 
 function buildChars(text: string) {
   return text.split('');
@@ -170,13 +170,13 @@ export default function ScrollRevealText() {
 
   const line1Chars = buildChars(LINE_1);
   const line2DimChars = buildChars(LINE_2_DIM);
-  const line2LitChars = buildChars(LINE_2_LIT);
+  // const line2LitChars = buildChars(LINE_2_LIT);
 
-  const allChars = [...line1Chars, ' ', ...line2DimChars, ' ', ...line2LitChars];
+  const allChars = [...line1Chars, ' ', ...line2DimChars];
   const totalChars = allChars.length;
 
   const line1End = line1Chars.length + 1;
-  const line2DimEnd = line1End + line2DimChars.length + 1;
+  // const line2DimEnd = line1End + line2DimChars.length + 1;
 
   function getCharRange(globalIndex: number): [number, number] {
     const startFrac = PHASE1_START + (globalIndex / totalChars) * (PHASE1_END - PHASE1_START);
@@ -220,9 +220,9 @@ export default function ScrollRevealText() {
               lineHeight: 1.15,
               letterSpacing: '-0.02em',
               zIndex: 20,
-              maxWidth: '70rem',
+              maxWidth: '100rem',
             }}
-            className="text-4xl md:text-6xl lg:text-7xl xl:text-8xl"
+            className="text-lg md:text-3xl lg:text-4xl xl:text-6xl"
           >
             {/* Line 1 — dims later */}
             <div>
@@ -263,7 +263,7 @@ export default function ScrollRevealText() {
                   );
                 })}
               </span>
-              <span>
+              {/* <span>
                 {' '}
                 {line2LitChars.map((char, i) => {
                   const globalIndex = line2DimEnd + i;
@@ -281,7 +281,7 @@ export default function ScrollRevealText() {
                     />
                   );
                 })}
-              </span>
+              </span> */}
             </div>
           </div>
 
@@ -297,12 +297,12 @@ export default function ScrollRevealText() {
             }}
           >
             <p
-              style={{ color: '#9CA3AF', fontSize: '0.8rem', fontFamily: 'monospace', letterSpacing: '0.05em', lineHeight: 1.8 }}
+              style={{ color: '#9CA3AF', fontSize: '1rem', fontFamily: 'monospace', letterSpacing: '0.05em', lineHeight: 1.8 }}
               className="md:text-sm"
             >
-              A legacy of love, a lifetime of warmth. Their hands guided us,
-              their wisdom shaped us, and their memories will forever illuminate
-              our paths — a timeless reminder of who we are and where we come from.
+              {/* A legacy of love, a lifetime of warmth.  */}
+              {/* Their hands guided us, their wisdom shaped us. */}
+              Their memories will forever illuminate our paths, a timeless reminder of who we are and where we come from.
             </p>
           </motion.div>
         </div>
