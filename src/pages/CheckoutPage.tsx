@@ -12,6 +12,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
+import OgbonnaLogo from '@/assets/ogbonna-logo.png'
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -42,7 +43,8 @@ const BANK_DETAILS = {
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface FormData {
-  fullName:        string;
+  firstName:       string;
+  lastName:        string;
   email:           string;
   phone:           string;
   whatsapp:        string;
@@ -63,9 +65,16 @@ interface OrderResult {
 }
 
 const initialForm: FormData = {
-  fullName: '', email: '', phone: '', whatsapp: '',
-  quantity: 1, deliveryOption: 'PICKUP',
-  deliveryAddress: '', deliveryState: '', paymentRef: '',
+  firstName: '',
+  lastName:  '',
+  email: '', 
+  phone: '', 
+  whatsapp: '',
+  quantity: 1, 
+  deliveryOption: 'PICKUP',
+  deliveryAddress: '', 
+  deliveryState: '', 
+  paymentRef: '',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -242,22 +251,31 @@ function StepDetails({ data, onChange, onNext }: {
 
   function validate() {
     const e: typeof errors = {};
-    if (!data.fullName.trim()) e.fullName = 'Full name is required.';
-    if (!data.email.trim())    e.email    = 'Email is required.';
+    if (!data.firstName.trim()) e.firstName = 'First name is required.';
+    if (!data.lastName.trim())  e.lastName  = 'Last name is required.';
+    if (!data.email.trim())     e.email     = 'Email is required.';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) e.email = 'Enter a valid email.';
-    if (!data.phone.trim())    e.phone    = 'Phone number is required.';
+    if (!data.phone.trim())     e.phone     = 'Phone number is required.';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
   return (
     <div className="space-y-5">
-      <Field label="Full Name" required error={errors.fullName} htmlFor={`${id}-name`}>
-        <Input id={`${id}-name`} placeholder="e.g. Chukwuemeka Ogbonna"
-          value={data.fullName} onChange={e => onChange({ fullName: e.target.value })}
-          className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
-          aria-invalid={!!errors.fullName} />
-      </Field>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <Field label="First Name" required error={errors.firstName} htmlFor={`${id}-fname`}>
+          <Input id={`${id}-fname`} placeholder="e.g. Clinton"
+            value={data.firstName} onChange={e => onChange({ firstName: e.target.value })}
+            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
+            aria-invalid={!!errors.firstName} />
+        </Field>
+        <Field label="Last Name" required error={errors.lastName} htmlFor={`${id}-lname`}>
+          <Input id={`${id}-lname`} placeholder="e.g. Shepherd"
+            value={data.lastName} onChange={e => onChange({ lastName: e.target.value })}
+            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
+            aria-invalid={!!errors.lastName} />
+        </Field>
+      </div>
       <Field label="Email Address" required error={errors.email} htmlFor={`${id}-email`}>
         <Input id={`${id}-email`} type="email" placeholder="you@example.com"
           value={data.email} onChange={e => onChange({ email: e.target.value })}
@@ -368,7 +386,7 @@ function StepReview({ data, onChange, onBack, onNext }: {
       </div>
       <div className="flex gap-3">
         <Button type="button" variant="outline" onClick={onBack}
-          className="flex-1 h-12 rounded-xl border-white/10 text-slate-300 hover:text-white hover:bg-white/10">
+          className="flex-1 h-12 rounded-xl border-white/10 text-slate-900 hover:text-white hover:bg-white/10">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={() => { if (validate()) onNext(); }}
@@ -382,14 +400,14 @@ function StepReview({ data, onChange, onBack, onNext }: {
 
 // ─── Step 3 — Payment ─────────────────────────────────────────────────────────
 
-function StepPayment({ data, onChange, onBack, onSubmit, submitting, serverError, exchangeRate, rateLoading, rateError, onRateRetry }: {
+function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchangeRate, rateLoading, rateError, onRateRetry }: {
   data: FormData; onChange: (p: Partial<FormData>) => void;
   onBack: () => void; onSubmit: () => void;
   submitting: boolean; serverError: string | null;
   exchangeRate: ExchangeRate | null; rateLoading: boolean;
   rateError: boolean; onRateRetry: () => void;
 }) {
-  const id    = useId();
+  // const id    = useId();
   const total = computeTotal(data.quantity, data.deliveryOption);
 
   return (
@@ -436,11 +454,18 @@ function StepPayment({ data, onChange, onBack, onSubmit, submitting, serverError
 
       {/* Payment reference */}
       <div className="space-y-1.5">
-        <Field label="Payment Reference (optional)" htmlFor={`${id}-ref`}>
-          <Input id={`${id}-ref`} placeholder="Your bank transfer reference or receipt number"
-            value={data.paymentRef} onChange={e => onChange({ paymentRef: e.target.value })}
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11" />
-        </Field>
+        {/* <Field 
+              label="Payment Reference (optional)" 
+              htmlFor={`${id}-ref`}
+        >
+          <Input 
+            id={`${id}-ref`} 
+            placeholder="Your bank transfer reference or receipt number"
+            value={data.paymentRef} 
+            onChange={e => onChange({ paymentRef: e.target.value })}
+            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11" 
+          />
+        </Field> */}
         <p className="text-xs text-slate-500">
           You can submit now and upload your receipt in the next step.
         </p>
@@ -453,15 +478,19 @@ function StepPayment({ data, onChange, onBack, onSubmit, submitting, serverError
       )}
 
       <div className="flex gap-3">
-        <Button type="button" variant="outline" onClick={onBack} disabled={submitting}
-          className="flex-1 h-12 rounded-xl border-white/10 text-slate-300 hover:text-white hover:bg-white/10">
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onBack} 
+          disabled={submitting}
+          className="flex-1 h-12 rounded-xl border-white/10 text-slate-900 hover:text-white hover:bg-white/10">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={onSubmit} disabled={submitting}
           className="flex-1 h-12 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl">
           {submitting
             ? <><Loader2 className="mr-2 size-4 animate-spin" /> Submitting…</>
-            : <>Save &amp; Continue <ChevronRight className="ml-1 size-4" /></>}
+            : <>I Have Paid &amp; Continue <ChevronRight className="ml-1 size-4" /></>}
         </Button>
       </div>
       <p className="text-center text-xs text-slate-600 leading-relaxed">
@@ -562,7 +591,7 @@ function StepUpload({ form, order, onBack, onDone }: {
         </div>
         {[
           { label: 'Order ID',    value: order.id },
-          { label: 'Name',        value: form.fullName },
+          { label: 'Name',        value: `${form.firstName} ${form.lastName}` },
           { label: 'Quantity',    value: `${form.quantity} set(s)` },
           { label: 'Total Paid',  value: `£${total}` },
           { label: 'Delivery',    value: getDeliveryLabel(form.deliveryOption) },
@@ -649,7 +678,7 @@ function StepUpload({ form, order, onBack, onDone }: {
 
       <div className="flex gap-3">
         <Button type="button" variant="outline" onClick={onBack} disabled={uploading}
-          className="flex-1 h-12 rounded-xl border-white/10 text-slate-300 hover:text-white hover:bg-white/10">
+          className="flex-1 h-12 rounded-xl border-white/10 text-slate-900 hover:text-white hover:bg-white/10">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={handleUpload} disabled={uploading || !file}
@@ -693,7 +722,8 @@ export default function CheckoutPage() {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName:        form.fullName,
+          firstName:       form.firstName,
+          lastName:        form.lastName,
           email:           form.email,
           phone:           form.phone,
           whatsapp:        form.whatsapp        || undefined,
@@ -723,7 +753,7 @@ export default function CheckoutPage() {
       state: {
         orderId:    order!.id,
         totalPrice: order!.totalPrice,
-        fullName:   form.fullName,
+        fullName:   `${form.firstName} ${form.lastName}`,
         email:      form.email,
         receiptUrl,
       },
@@ -747,8 +777,14 @@ export default function CheckoutPage() {
   return (
     <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col">
       <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
-        <div className="max-w-xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link to="/" className="text-lg font-serif text-amber-500 tracking-widest uppercase">Ogbonnas</Link>
+        <div className="max-w-xl mx-auto px-6 h-[100px] flex items-center justify-between">
+          <Link to="/" className="text-lg font-serif text-amber-500 tracking-widest uppercase">
+            <img 
+              src={OgbonnaLogo}
+              alt='logo'
+              className="h-16 w-auto object-contain"
+            />
+          </Link>
           <span className="text-xs text-slate-500 font-mono tracking-wider uppercase">Secure Checkout</span>
         </div>
       </header>

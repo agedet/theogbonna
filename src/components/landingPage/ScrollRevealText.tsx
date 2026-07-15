@@ -222,7 +222,7 @@ export default function ScrollRevealText() {
               zIndex: 20,
               maxWidth: '100rem',
             }}
-            className="text-lg md:text-3xl lg:text-4xl xl:text-6xl"
+            className="text-2xl md:text-3xl lg:text-4xl xl:text-6xl"
           >
             {/* Line 1 — dims later */}
             <div>
