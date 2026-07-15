@@ -10,7 +10,6 @@ export default function ProductSection() {
   return (
     <section id="asoebi" className="py-32 px-6 bg-slate-900">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-        
         <div className="space-y-6 relative">
           <motion.img 
             initial={{ opacity: 0, x: -30 }}
@@ -18,7 +17,7 @@ export default function ProductSection() {
             viewport={{ once: true }}
             src={Material1} 
             alt="Asoebi Fabric Lace" 
-            className="w-4/5 rounded-2xl shadow-xl z-10 relative"
+            className="w-4/5 max-h-120 object-cover rounded-2xl shadow-xl z-10 relative"
           />
 
           <motion.img 
@@ -27,7 +26,7 @@ export default function ProductSection() {
             viewport={{ once: true }}
             src={Material} 
             alt="Asoebi Gele" 
-            className="w-3/5 rounded-2xl shadow-2xl absolute -bottom-16 -right-4 border-4 border-slate-900"
+            className="w-3/5 max-h-100 object-cover rounded-2xl shadow-2xl absolute -bottom-16 -right-4 border-4 border-slate-900"
           />
         </div>
 
