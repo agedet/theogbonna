@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import InvitationCard from '@/assets/invitation-card.jpeg';
+import InvitationCard from '@/assets/invitation-card2.jpeg';
 
 export default function InvitationSection() {
   return (

@@ -1,9 +1,10 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Mail, ArrowLeft, Copy, Check, MessageCircle } from 'lucide-react';
+import { CheckCircle2, ArrowLeft, Copy, Check, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import OgbonnaLogo from '@/assets/ogbonna-logo.png'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -63,23 +64,23 @@ function AnimatedCheckmark() {
 
 // ─── Next steps list ──────────────────────────────────────────────────────────
 
-const NEXT_STEPS = [
-  {
-    n: 1,
-    title: 'Receipt submitted',
-    body: 'Your payment receipt has been uploaded and saved. The host has been notified.',
-  },
-  {
-    n: 2,
-    title: 'Payment verification',
-    body: 'The host will verify your transfer against the receipt. This usually takes 24 hours.',
-  },
-  {
-    n: 3,
-    title: 'Confirmation & dispatch',
-    body: 'Once verified you will receive a final confirmation email and your materials will be prepared for collection or delivery.',
-  },
-];
+// const NEXT_STEPS = [
+//   {
+//     n: 1,
+//     title: 'Receipt submitted',
+//     body: 'Your payment receipt has been uploaded and saved. The host has been notified.',
+//   },
+//   {
+//     n: 2,
+//     title: 'Payment verification',
+//     body: 'The host will verify your transfer against the receipt. This usually takes 24 hours.',
+//   },
+//   {
+//     n: 3,
+//     title: 'Confirmation & dispatch',
+//     body: 'Once verified you will receive a final confirmation email and your materials will be prepared for collection or delivery.',
+//   },
+// ];
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 
@@ -102,12 +103,24 @@ export default function SuccessPage() {
     <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col">
       {/* Minimal header */}
       <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
+        <div className="max-w-xl mx-auto px-6 h-[100px] flex items-center justify-between">
+          <Link to="/">
+            <img 
+              src={OgbonnaLogo}
+              alt='logo'
+              className="h-16 w-auto object-contain"
+            />
+          </Link>
+        </div>
+      </header>
+
+      {/* <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
         <div className="max-w-xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link to="/" className="text-lg font-serif text-amber-500 tracking-widest uppercase">
             Ogbonnas
           </Link>
         </div>
-      </header>
+      </header> */}
 
       <main className="flex-1 flex flex-col items-center justify-start py-14 px-4">
         <div className="w-full max-w-lg space-y-8">
@@ -169,7 +182,7 @@ export default function SuccessPage() {
                   <span className="text-sm text-slate-400">Receipt</span>
                   <a href={receiptUrl} target="_blank" rel="noopener noreferrer"
                     className="text-sm text-amber-400 hover:text-amber-300 underline underline-offset-2 transition-colors">
-                    View in Drive ↗
+                    View ↗
                   </a>
                 </div>
               )}
@@ -177,7 +190,7 @@ export default function SuccessPage() {
           </motion.div>
 
           {/* Email notice */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.3, ease: 'easeOut' }}
@@ -188,10 +201,10 @@ export default function SuccessPage() {
               A confirmation email has been sent to{' '}
               <strong className="text-blue-300">{email}</strong>. The host has also been notified. Check your spam folder if it doesn't arrive within a few minutes.
             </p>
-          </motion.div>
+          </motion.div> */}
 
           {/* Next steps */}
-          <motion.div
+          {/* <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.4, ease: 'easeOut' }}
@@ -218,7 +231,7 @@ export default function SuccessPage() {
                 </motion.div>
               ))}
             </div>
-          </motion.div>
+          </motion.div> */}
 
           {/* CTA */}
           <motion.div
@@ -230,7 +243,7 @@ export default function SuccessPage() {
             <Button
               asChild
               variant="outline"
-              className="flex-1 h-12 rounded-xl border-white/10 text-slate-300 hover:text-white hover:bg-white/10"
+              className="flex-1 h-12 rounded-xl border-white/10 text-slate-900 hover:text-white hover:bg-white/10"
             >
               <Link to="/">
                 <ArrowLeft className="mr-2 size-4" />
@@ -242,7 +255,7 @@ export default function SuccessPage() {
               asChild
               className="flex-1 h-12 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-semibold"
             >
-              <a href="https://wa.me/2347065606131" target="_blank" rel="noopener noreferrer">
+              <a href="https://wa.me/447958198281" target="_blank" rel="noopener noreferrer">
                 <MessageCircle className="mr-2 size-4" />
                 Message Host on WhatsApp
               </a>
@@ -250,14 +263,14 @@ export default function SuccessPage() {
           </motion.div>
 
           {/* Footer note */}
-          <p className="text-center text-xs text-slate-600 pb-4">
+          {/* <p className="text-center text-xs text-slate-600 pb-4">
             Payment deadline: <span className="text-red-400/70 font-medium">September 30, 2026</span>
             {' · '}
             Questions? Email{' '}
-            <a href="mailto:culmerin@gmail.com" className="text-amber-500/60 hover:text-amber-400 transition-colors">
-              culmerin@gmail.com
+            <a href="mailto:ndliz2001@hotmail.co.uk" className="text-amber-500/60 hover:text-amber-400 transition-colors">
+              ndliz2001@hotmail.co.uk
             </a>
-          </p>
+          </p> */}
 
         </div>
       </main>
