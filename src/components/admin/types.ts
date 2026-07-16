@@ -32,7 +32,12 @@ export interface Order {
   receiptUrl?: string | null;
   status: string;
   createdAt: string;
-  attendees?: { firstName: string; lastName: string } | null;
+  attendees?: {
+    id?: string;
+    firstName: string;
+    lastName: string;
+    email?: string;
+  } | null;
   transactions: Transaction[];
 }
 

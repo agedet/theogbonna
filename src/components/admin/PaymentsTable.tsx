@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Search, RefreshCw, Loader2, ChevronDown, ExternalLink, Trash2 } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Search, RefreshCw, Loader2, ChevronDown, ExternalLink, Trash2, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useConfirmDialog } from '@/components/ui/use-confirm-dialog';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { StatusBadge } from './StatusBadge';
@@ -12,7 +14,14 @@ interface PaymentsTableProps {
   canDelete?: boolean;
 }
 
+function paymentDetailPath(pathname: string, id: string) {
+  const base = pathname.startsWith('/super-admin') ? '/super-admin/payments' : '/admin/payments';
+  return `${base}/${id}`;
+}
+
 export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTableProps) {
+  const location = useLocation();
+  const { confirm, dialog } = useConfirmDialog();
   const [txns, setTxns] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -47,6 +56,13 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
   }, [fetchTxns]);
 
   async function updateStatus(paymentId: string, status: string) {
+    const ok = await confirm({
+      title: 'Update payment status?',
+      description: `Change this payment to “${status}”? Linked order status will update to match.`,
+      confirmLabel: 'Update status',
+    });
+    if (!ok) return;
+
     setBusyId(paymentId);
     setError(null);
     try {
@@ -61,9 +77,14 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
   }
 
   async function deletePayment(paymentId: string) {
-    if (!window.confirm('Delete this payment record? This cannot be undone.')) {
-      return;
-    }
+    const ok = await confirm({
+      title: 'Delete payment?',
+      description: 'This will permanently delete this payment record. This cannot be undone.',
+      confirmLabel: 'Delete payment',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+
     setBusyId(paymentId);
     setError(null);
     try {
@@ -79,6 +100,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
 
   return (
     <div className="space-y-3">
+      {dialog}
       {error && (
         <p className="text-xs text-red-400 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2">
           {error}
@@ -130,7 +152,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/[0.06] bg-white/[0.02]">
-                {['Buyer', 'Reference', 'Amount', 'Receipt', 'Status', 'Actions', 'Date'].map(h => (
+                {['Buyer', 'Reference', 'Amount', 'Date', 'Receipt', 'Status', 'Actions'].map(h => (
                   <th
                     key={h}
                     className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap"
@@ -159,9 +181,12 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                     <td className="px-4 py-3">
                       {t.attendees ? (
                         <>
-                          <p className="font-medium text-white">
+                          <Link
+                            to={paymentDetailPath(location.pathname, t.id)}
+                            className="font-medium text-white hover:text-amber-400 transition-colors"
+                          >
                             {t.attendees.firstName} {t.attendees.lastName}
-                          </p>
+                          </Link>
                           <p className="text-xs text-slate-500">{t.attendees.email}</p>
                         </>
                       ) : (
@@ -172,6 +197,13 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                     <td className="px-4 py-3 font-medium text-amber-400">
                       {t.currency === 'GBP' ? '£' : '₦'}
                       {t.amount}
+                    </td>
+                    <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
+                      {new Date(t.createdAt).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
                     </td>
                     <td className="px-4 py-3">
                       {t.receiptUrl || t.orders?.receiptUrl ? (
@@ -195,6 +227,13 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                         <Loader2 className="size-4 animate-spin text-slate-500" />
                       ) : (
                         <div className="flex items-center gap-2">
+                          <Link
+                            to={paymentDetailPath(location.pathname, t.id)}
+                            title="View details"
+                            className="flex size-8 items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                          >
+                            <Eye className="size-3.5" />
+                          </Link>
                           <select
                             value={t.status}
                             onChange={e => void updateStatus(t.id, e.target.value)}
@@ -218,13 +257,6 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                           )}
                         </div>
                       )}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
-                      {new Date(t.createdAt).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                      })}
                     </td>
                   </tr>
                 ))

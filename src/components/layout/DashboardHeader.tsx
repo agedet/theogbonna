@@ -40,7 +40,7 @@ export const DashboardHeader = ({
             dashboardType={dashboardType}
           />
           <Link to={homeUrl} className="text-sm font-semibold text-white lg:hidden">
-            Ogbonna
+            Ogbonnas Memorial
           </Link>
         </div>
 

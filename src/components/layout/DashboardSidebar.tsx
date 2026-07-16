@@ -22,7 +22,7 @@ export const DashboardSidebar = ({
 }: DashboardSidebarProps) => {
   const location = useLocation();
   const pathname = location.pathname;
-  const { role, logout } = useAuthContext();
+  const { logout } = useAuthContext();
 
   const isActive = (item: SideBarNav) => {
     const pathOnly = item.url.split('?')[0];
@@ -53,10 +53,11 @@ export const DashboardSidebar = ({
           <Shield className="size-4 text-amber-400" />
         </div>
         <div>
-          <h2 className="text-base font-semibold text-white">Ogbonna</h2>
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide">
+          <h2 className="text-base font-semibold text-white">Ogbonnas Memorial</h2>
+          {/* Role label intentionally hidden from UI */}
+          {/* <p className="text-[10px] text-slate-500 uppercase tracking-wide">
             {isSuperAdmin ? 'Super Admin' : 'Admin'}
-          </p>
+          </p> */}
         </div>
       </div>
 
@@ -99,11 +100,11 @@ export const DashboardSidebar = ({
             </div>
           </div>
         )}
-        {!user && (
+        {/* {!user && (
           <p className="mb-3 px-2 text-sm font-medium text-slate-400 capitalize">
             {role?.replace(/_/g, ' ') ?? 'User'}
           </p>
-        )}
+        )} */}
         <Button
           variant="ghost"
           size="sm"

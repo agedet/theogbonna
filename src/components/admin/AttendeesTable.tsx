@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Search, RefreshCw, Loader2, Trash2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useConfirmDialog } from '@/components/ui/use-confirm-dialog';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { TablePagination } from './TablePagination';
@@ -11,6 +12,7 @@ interface AttendeesTableProps {
 }
 
 export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
+  const { confirm, dialog } = useConfirmDialog();
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -43,13 +45,14 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
   }, [fetchAttendees]);
 
   async function deleteAttendee(id: string, email: string) {
-    if (
-      !window.confirm(
-        `Delete attendee ${email}? Related payments will be removed and orders unlinked.`,
-      )
-    ) {
-      return;
-    }
+    const ok = await confirm({
+      title: 'Delete attendee?',
+      description: `Delete ${email}? Related payments will be removed and orders unlinked. This cannot be undone.`,
+      confirmLabel: 'Delete attendee',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+
     setBusyId(id);
     setError(null);
     try {
@@ -66,6 +69,7 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
 
   return (
     <div className="space-y-3">
+      {dialog}
       {error && (
         <p className="text-xs text-red-400 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2">
           {error}

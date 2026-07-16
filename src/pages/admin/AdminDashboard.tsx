@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   ShoppingBag,
   CreditCard,
   TrendingUp,
   CheckCircle2,
-  UsersRound,
 } from 'lucide-react';
 import { OrdersTable, PaymentsTable, type Stats } from '@/components/admin';
 import { useAuthContext } from '@/context/useAuthContext';
-import { URLS } from '@/utils/routes';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
@@ -70,36 +67,14 @@ export default function AdminDashboardPage() {
   }, [fetchStats]);
 
   const isSuperAdmin = user?.role === 'super_admin';
-  const attendeesUrl = isSuperAdmin ? URLS.SUPER_ADMIN_ATTENDEES : URLS.ADMIN_ATTENDEES;
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold text-white">
-            Welcome, {user?.firstName ?? 'Admin'}
-          </h1>
-          <p className="text-slate-500 text-sm">Ogbonna Memorial — Asoebi Orders</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <span
-            className={cn(
-              'text-xs px-2.5 py-1 rounded-full border font-medium',
-              isSuperAdmin
-                ? 'bg-purple-500/10 border-purple-500/20 text-purple-400'
-                : 'bg-blue-500/10 border-blue-500/20 text-blue-400',
-            )}
-          >
-            {isSuperAdmin ? 'Super Admin' : 'Admin'}
-          </span>
-          <Link
-            to={attendeesUrl}
-            className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white px-3 py-1.5 rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
-          >
-            <UsersRound className="size-3.5" />
-            Attendees
-          </Link>
-        </div>
+      <div>
+        <h1 className="text-xl font-semibold text-white">
+          Welcome {user?.firstName ?? ''}
+        </h1>
+        <p className="text-slate-500 text-sm">Ogbonna Memorial — Asoebi Orders</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
