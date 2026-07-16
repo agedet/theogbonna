@@ -23,9 +23,10 @@ export interface ILoginPayload {
 }
 
 export interface ILoginResponse {
-  sessionToken: string;
+  sessionToken?: string;
   message: string;
   requiresTwoFactor?: boolean;
+  requiresEmailVerification?: boolean;
   email?: string;
 }
 

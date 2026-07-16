@@ -1,6 +1,7 @@
 import { createContext } from 'react';
 import type { UserProfile } from '../services/user';
 import type { AppRole } from '../utils/routeConfig';
+import type { ILoginResponse } from '../services/auth/types';
 
 export interface AuthContextType {
   user: UserProfile | null;
@@ -8,7 +9,7 @@ export interface AuthContextType {
   permissions: string[];
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<{ sessionToken: string; message: string }>;
+  login: (email: string, password: string) => Promise<ILoginResponse>;
   verifyOtp: (sessionToken: string, otpCode: string) => Promise<UserProfile>;
   logout: () => Promise<void>;
   hasPermission: (permission: string) => boolean;

@@ -32,13 +32,20 @@ export default function VerifyLogin() {
     searchParams.get('email') ||
     '';
 
+  const hasValidSessionToken =
+    !!sessionToken &&
+    sessionToken !== 'undefined' &&
+    sessionToken !== 'null' &&
+    sessionToken.split('.').length === 3;
+
   useEffect(() => {
-    if (!sessionToken) {
+    if (!hasValidSessionToken) {
+      sessionStorage.removeItem(TOKEN.SESSION_TOKEN);
       navigate(URLS.ADMIN_LOGIN, { replace: true });
     }
-  }, [sessionToken, navigate]);
+  }, [hasValidSessionToken, navigate]);
 
-  if (!sessionToken) return null;
+  if (!hasValidSessionToken) return null;
 
   async function handleVerify(otp: string) {
     const user = await verifyOtp(sessionToken, otp);
