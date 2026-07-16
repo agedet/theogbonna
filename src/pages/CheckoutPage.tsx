@@ -157,30 +157,30 @@ const STEPS = ['Your Details', 'Review Order', 'Payment', 'Upload Receipt'];
 
 function StepIndicator({ current }: { current: number }) {
   return (
-    <div className="flex items-center justify-center gap-0 mb-10">
+    <div className="mb-8 flex items-start justify-between gap-1 overflow-x-auto pb-1 sm:mb-10 sm:items-center sm:justify-center sm:gap-0 sm:overflow-visible">
       {STEPS.map((label, i) => {
         const done   = i < current;
         const active = i === current;
         const last   = i === STEPS.length - 1;
         return (
-          <div key={i} className="flex items-center">
-            <div className="flex flex-col items-center gap-1.5">
+          <div key={i} className="flex min-w-0 flex-1 items-center sm:flex-none">
+            <div className="flex w-full flex-col items-center gap-1 sm:w-auto sm:gap-1.5">
               <div className={cn(
-                'flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold transition-all duration-300',
+                'flex size-7 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all duration-300 sm:size-8 sm:text-sm',
                 done   && 'border-amber-500 bg-amber-500 text-white',
                 active && 'border-amber-500 bg-transparent text-amber-500',
                 !done && !active && 'border-slate-700 bg-transparent text-slate-600',
               )}>
-                {done ? <Check className="size-4" /> : i + 1}
+                {done ? <Check className="size-3.5 sm:size-4" /> : i + 1}
               </div>
               <span className={cn(
-                'text-xs font-medium whitespace-nowrap',
+                'max-w-[4.5rem] text-center text-[0.6rem] leading-tight font-medium sm:max-w-none sm:whitespace-nowrap sm:text-xs',
                 active ? 'text-amber-400' : done ? 'text-amber-500/70' : 'text-slate-600',
               )}>{label}</span>
             </div>
             {!last && (
               <div className={cn(
-                'mb-5 mx-1 h-px w-8 sm:w-14 transition-colors duration-300',
+                'mx-0.5 mb-4 hidden h-px w-6 shrink-0 transition-colors duration-300 sm:mx-1 sm:mb-5 sm:block sm:w-10 md:w-14',
                 done ? 'bg-amber-500' : 'bg-slate-700',
               )} />
             )}
@@ -326,10 +326,10 @@ function StepReview({ data, onChange, onBack, onNext }: {
     <div className="space-y-6">
       <div>
         <p className="text-sm font-medium text-slate-300 mb-3">How many sets?</p>
-        <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3">
-          <div>
-            <p className="text-white font-medium">5 Yards Beaded Lace &amp; Gele</p>
-            <p className="text-slate-500 text-sm mt-0.5">£{UNIT_PRICE} per set</p>
+        <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="font-medium text-white text-sm sm:text-base">5 Yards Beaded Lace &amp; Gele</p>
+            <p className="mt-0.5 text-sm text-slate-500">£{UNIT_PRICE} per set</p>
           </div>
           <QuantityStepper value={data.quantity} onChange={q => onChange({ quantity: q })} />
         </div>
@@ -384,13 +384,13 @@ function StepReview({ data, onChange, onBack, onNext }: {
           <span className="text-amber-400 font-bold text-lg">£{total}</span>
         </div>
       </div>
-      <div className="flex gap-3">
+      <div className="flex flex-col-reverse gap-3 sm:flex-row">
         <Button type="button" variant="outline" onClick={onBack}
-          className="flex-1 h-12 rounded-xl border-white/10 text-slate-900 hover:text-white hover:bg-white/10">
+          className="h-12 flex-1 rounded-xl border-white/10 text-slate-900 hover:bg-white/10 hover:text-white">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={() => { if (validate()) onNext(); }}
-          className="flex-1 h-12 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl">
+          className="h-12 flex-1 rounded-xl bg-amber-600 text-sm font-semibold text-white hover:bg-amber-700 sm:text-base">
           Proceed to Payment <ChevronRight className="ml-1 size-4" />
         </Button>
       </div>
@@ -413,17 +413,17 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
   return (
     <div className="space-y-6">
       {/* Amount due */}
-      <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 px-5 py-4">
-        <div className="flex items-start justify-between">
-          <div>
+      <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-4 sm:px-5">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
             <p className="text-sm text-slate-400">Amount due</p>
-            <p className="text-3xl font-bold text-amber-400 mt-0.5">£{total}</p>
+            <p className="mt-0.5 text-2xl font-bold text-amber-400 sm:text-3xl">£{total}</p>
             <div className="mt-1.5">
               <NgnEquivalent gbpTotal={total} rate={exchangeRate}
                 loading={rateLoading} error={rateError} onRetry={onRateRetry} />
             </div>
           </div>
-          <div className="text-right text-xs text-slate-500 pt-1">
+          <div className="shrink-0 text-left text-xs text-slate-500 sm:pt-1 sm:text-right">
             <p>{data.quantity} set(s)</p>
             <p>{getDeliveryLabel(data.deliveryOption)}</p>
           </div>
@@ -441,10 +441,10 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
             { label: 'Account No.',  value: BANK_DETAILS.ng.account     },
             { label: 'Bank',         value: BANK_DETAILS.ng.bank        },
           ] as { label: string; value: string }[]).map(row => (
-            <div key={row.label} className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">{row.label}</span>
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-mono text-white">{row.value}</span>
+            <div key={row.label} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <span className="shrink-0 text-xs text-slate-500">{row.label}</span>
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="truncate text-sm font-mono text-white">{row.value}</span>
                 <CopyButton text={row.value} />
               </div>
             </div>
@@ -477,17 +477,17 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
         </div>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex flex-col-reverse gap-3 sm:flex-row">
         <Button 
           type="button" 
           variant="outline" 
           onClick={onBack} 
           disabled={submitting}
-          className="flex-1 h-12 rounded-xl border-white/10 text-slate-900 hover:text-white hover:bg-white/10">
+          className="h-12 flex-1 rounded-xl border-white/10 text-slate-900 hover:bg-white/10 hover:text-white">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={onSubmit} disabled={submitting}
-          className="flex-1 h-12 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl">
+          className="h-12 flex-1 rounded-xl bg-amber-600 text-sm font-semibold text-white hover:bg-amber-700 sm:text-base">
           {submitting
             ? <><Loader2 className="mr-2 size-4 animate-spin" /> Submitting…</>
             : <>I Have Paid &amp; Continue <ChevronRight className="ml-1 size-4" /></>}
@@ -596,9 +596,9 @@ function StepUpload({ form, order, onBack, onDone }: {
           { label: 'Total Paid',  value: `£${total}` },
           { label: 'Delivery',    value: getDeliveryLabel(form.deliveryOption) },
         ].map(row => (
-          <div key={row.label} className="flex justify-between px-4 py-2.5 text-sm">
-            <span className="text-slate-500">{row.label}</span>
-            <span className="text-white font-medium font-mono">{row.value}</span>
+          <div key={row.label} className="flex flex-col gap-0.5 px-4 py-2.5 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+            <span className="shrink-0 text-slate-500">{row.label}</span>
+            <span className="break-all font-mono font-medium text-white sm:text-right">{row.value}</span>
           </div>
         ))}
       </div>
@@ -614,7 +614,7 @@ function StepUpload({ form, order, onBack, onDone }: {
           onDragOver={e => { e.preventDefault(); setDragOver(true); }}
           onDragLeave={() => setDragOver(false)}
           className={cn(
-            'relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-6 py-10 cursor-pointer transition-all duration-200',
+            'relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-4 py-8 cursor-pointer transition-all duration-200 sm:px-6 sm:py-10',
             dragOver ? 'border-amber-500 bg-amber-500/10'
               : file  ? 'border-emerald-500/50 bg-emerald-500/5'
               : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]',
@@ -636,7 +636,7 @@ function StepUpload({ form, order, onBack, onDone }: {
             <>
               {preview
                 ? <img src={preview} alt="Receipt preview"
-                    className="max-h-40 rounded-xl object-contain" />
+                    className="max-h-32 w-full max-w-xs rounded-xl object-contain sm:max-h-40" />
                 : <div className="flex items-center gap-2">
                     <FileText className="size-8 text-slate-400" />
                     <p className="text-sm text-slate-300">{file.name}</p>
@@ -676,13 +676,13 @@ function StepUpload({ form, order, onBack, onDone }: {
         </div>
       )}
 
-      <div className="flex gap-3">
+      <div className="flex flex-col-reverse gap-3 sm:flex-row">
         <Button type="button" variant="outline" onClick={onBack} disabled={uploading}
-          className="flex-1 h-12 rounded-xl border-white/10 text-slate-900 hover:text-white hover:bg-white/10">
+          className="h-12 flex-1 rounded-xl border-white/10 text-slate-900 hover:bg-white/10 hover:text-white">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={handleUpload} disabled={uploading || !file}
-          className="flex-1 h-12 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-xl disabled:opacity-60">
+          className="h-12 flex-1 rounded-xl bg-amber-600 font-semibold text-white hover:bg-amber-700 disabled:opacity-60">
           {uploading
             ? <><Loader2 className="mr-2 size-4 animate-spin" /> Uploading…</>
             : <><UploadCloud className="mr-2 size-4" /> Submit Receipt</>}
@@ -775,25 +775,29 @@ export default function CheckoutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col">
+    <div className="flex min-h-screen flex-col bg-slate-950 text-slate-200">
       <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
-        <div className="max-w-xl mx-auto px-6 h-[100px] flex items-center justify-between">
-          <Link to="/" className="text-lg font-serif text-amber-500 tracking-widest uppercase">
-            <img 
+        <div className="mx-auto flex h-[72px] max-w-xl items-center justify-between px-4 sm:h-[100px] sm:px-6">
+          <Link to="/" className="shrink-0">
+            <img
               src={OgbonnaLogo}
-              alt='logo'
-              className="h-16 w-auto object-contain"
+              alt="Ogbonna logo"
+              className="h-12 w-auto object-contain sm:h-16"
             />
           </Link>
-          <span className="text-xs text-slate-500 font-mono tracking-wider uppercase">Secure Checkout</span>
+          <span className="text-[0.65rem] font-mono tracking-wider text-slate-500 uppercase sm:text-xs">
+            Secure Checkout
+          </span>
         </div>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-start py-12 px-4">
+      <main className="flex flex-1 flex-col items-center justify-start px-3 py-8 sm:px-4 sm:py-12">
         <div className="w-full max-w-xl">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-serif text-white">Asoebi Order</h1>
-            <p className="text-slate-500 text-sm mt-1">5 Yards Beaded Lace &amp; Gele — £100 per set</p>
+          <div className="mb-6 text-center sm:mb-8">
+            <h1 className="font-serif text-xl text-white sm:text-2xl">Asoebi Order</h1>
+            <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+              5 Yards Beaded Lace &amp; Gele — £100 per set
+            </p>
           </div>
 
           <StepIndicator current={step} />
