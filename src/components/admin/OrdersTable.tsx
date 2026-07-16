@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Search, RefreshCw, Loader2, ChevronDown, ExternalLink, Trash2 } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { Search, RefreshCw, Loader2, ChevronDown, ExternalLink, Trash2, Eye } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useConfirmDialog } from '@/components/ui/use-confirm-dialog';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { StatusBadge } from './StatusBadge';
@@ -18,7 +20,14 @@ interface OrdersTableProps {
   canDelete?: boolean;
 }
 
+function orderDetailPath(pathname: string, id: string) {
+  const base = pathname.startsWith('/super-admin') ? '/super-admin/orders' : '/admin/orders';
+  return `${base}/${id}`;
+}
+
 export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) {
+  const location = useLocation();
+  const { confirm, dialog } = useConfirmDialog();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -53,6 +62,13 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
   }, [fetchOrders]);
 
   async function updateStatus(orderId: string, status: string) {
+    const ok = await confirm({
+      title: 'Update order status?',
+      description: `Change this order to “${formatStatusLabel(status)}”? Linked payment status will update to match.`,
+      confirmLabel: 'Update status',
+    });
+    if (!ok) return;
+
     setBusyId(orderId);
     setError(null);
     try {
@@ -67,9 +83,14 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
   }
 
   async function deleteOrder(orderId: string) {
-    if (!window.confirm('Delete this order and its related payments? This cannot be undone.')) {
-      return;
-    }
+    const ok = await confirm({
+      title: 'Delete order?',
+      description: 'This will permanently delete the order and its related payments. This cannot be undone.',
+      confirmLabel: 'Delete order',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+
     setBusyId(orderId);
     setError(null);
     try {
@@ -83,10 +104,9 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
     }
   }
 
-  const colSpan = canDelete ? 7 : 7;
-
   return (
     <div className="space-y-3">
+      {dialog}
       {error && (
         <p className="text-xs text-red-400 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2">
           {error}
@@ -141,7 +161,7 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-white/[0.06] bg-white/[0.02]">
-                {['Customer', 'Qty', 'Total', 'Delivery', 'Receipt', 'Status', 'Actions'].map(h => (
+                {['Customer', 'Qty', 'Total', 'Date', 'Receipt', 'Status', 'Actions'].map(h => (
                   <th
                     key={h}
                     className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap"
@@ -154,13 +174,13 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
             <tbody className="divide-y divide-white/[0.04]">
               {loading && orders.length === 0 ? (
                 <tr>
-                  <td colSpan={colSpan} className="px-4 py-10 text-center">
+                  <td colSpan={7} className="px-4 py-10 text-center">
                     <Loader2 className="size-5 animate-spin text-slate-600 mx-auto" />
                   </td>
                 </tr>
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan={colSpan} className="px-4 py-10 text-center text-slate-600 text-sm">
+                  <td colSpan={7} className="px-4 py-10 text-center text-slate-600 text-sm">
                     No orders found.
                   </td>
                 </tr>
@@ -168,13 +188,24 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                 orders.map(o => (
                   <tr key={o.id} className="hover:bg-white/[0.02] transition-colors">
                     <td className="px-4 py-3">
-                      <p className="font-medium text-white">{o.fullName}</p>
+                      <Link
+                        to={orderDetailPath(location.pathname, o.id)}
+                        className="font-medium text-white hover:text-amber-400 transition-colors"
+                      >
+                        {o.fullName}
+                      </Link>
                       <p className="text-xs text-slate-500 mt-0.5">{o.email}</p>
                       <p className="text-xs text-slate-600">{o.phone}</p>
                     </td>
                     <td className="px-4 py-3 text-slate-300">{o.quantity}</td>
                     <td className="px-4 py-3 font-medium text-amber-400">£{o.totalPrice}</td>
-                    <td className="px-4 py-3 text-slate-400 text-xs">{o.deliveryOption}</td>
+                    <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
+                      {new Date(o.createdAt).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                      })}
+                    </td>
                     <td className="px-4 py-3">
                       {o.receiptUrl ? (
                         <a
@@ -197,6 +228,13 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                         <Loader2 className="size-4 animate-spin text-slate-500" />
                       ) : (
                         <div className="flex items-center gap-2">
+                          <Link
+                            to={orderDetailPath(location.pathname, o.id)}
+                            title="View details"
+                            className="flex size-8 items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                          >
+                            <Eye className="size-3.5" />
+                          </Link>
                           <select
                             value={o.status}
                             onChange={e => void updateStatus(o.id, e.target.value)}

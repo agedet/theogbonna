@@ -14,7 +14,9 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import AccessDenied from './pages/auth/AccessDenied';
 import AdminDashboardPage from './pages/admin/AdminDashboard';
 import OrdersPage from './pages/admin/OrdersPage';
+import OrderDetailsPage from './pages/admin/OrderDetailsPage';
 import PaymentsPage from './pages/admin/PaymentsPage';
+import PaymentDetailsPage from './pages/admin/PaymentDetailsPage';
 import AttendeesPage from './pages/admin/AttendeesPage';
 import SuperAdminPage from './pages/super-admin/SuperAdminPage';
 import UserManagementPage from './pages/super-admin/UserManagementPage';
@@ -130,7 +132,9 @@ function App() {
           <Route path="dashboard" element={<AdminDashboardPage />} />
           <Route path="attendees" element={<AttendeesPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="orders/:id" element={<OrderDetailsPage />} />
           <Route path="payments" element={<PaymentsPage />} />
+          <Route path="payments/:id" element={<PaymentDetailsPage />} />
           <Route path="profile" element={<Placeholder title="Profile" />} />
           <Route path="*" element={<Navigate to={URLS.ERROR_PAGE} replace />} />
         </Route>
@@ -149,7 +153,9 @@ function App() {
           <Route path="user-management" element={<UserManagementPage />} />
           <Route path="attendees" element={<AttendeesPage />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="orders/:id" element={<OrderDetailsPage />} />
           <Route path="payments" element={<PaymentsPage />} />
+          <Route path="payments/:id" element={<PaymentDetailsPage />} />
           <Route path="profile" element={<Placeholder title="Profile" />} />
           <Route path="*" element={<Navigate to={URLS.ERROR_PAGE} replace />} />
         </Route>

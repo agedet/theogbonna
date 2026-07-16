@@ -1,5 +1,5 @@
 export const TOKEN = {
-    // Enbros/Partner use "accessToken" cookie (set by backend via Set-Cookie header)
+    // Super Admin/Admin use "accessToken" cookie (set by backend via Set-Cookie header)
     ACCESS_TOKEN: "accessToken",
   
     // Members use "memberAccessToken" cookie (set by backend via Set-Cookie header)

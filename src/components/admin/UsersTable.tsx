@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Search, RefreshCw, Loader2, Trash2, ChevronDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { useConfirmDialog } from '@/components/ui/use-confirm-dialog';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { TablePagination } from './TablePagination';
@@ -12,6 +13,7 @@ interface UsersTableProps {
 }
 
 export function UsersTable({ currentUserId, onChanged }: UsersTableProps) {
+  const { confirm, dialog } = useConfirmDialog();
   const [admins, setAdmins] = useState<AdminRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -58,13 +60,14 @@ export function UsersTable({ currentUserId, onChanged }: UsersTableProps) {
   }
 
   async function deleteAdmin(admin: AdminRecord) {
-    if (
-      !window.confirm(
-        `Delete ${admin.firstName} ${admin.lastName} (${admin.email})? They will no longer be able to sign in.`,
-      )
-    ) {
-      return;
-    }
+    const ok = await confirm({
+      title: 'Delete admin?',
+      description: `Delete ${admin.firstName} ${admin.lastName} (${admin.email})? They will no longer be able to sign in.`,
+      confirmLabel: 'Delete admin',
+      variant: 'destructive',
+    });
+    if (!ok) return;
+
     setBusyId(admin.id);
     setError(null);
     try {
@@ -80,6 +83,7 @@ export function UsersTable({ currentUserId, onChanged }: UsersTableProps) {
 
   return (
     <div className="space-y-3">
+      {dialog}
       {error && (
         <p className="text-xs text-red-400 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2">
           {error}

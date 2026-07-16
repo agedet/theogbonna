@@ -37,12 +37,13 @@ export const Sidebar: React.FC = () => {
         <h2
           className={`text-xl font-bold text-primary-base transition-opacity duration-300 ${isExpanded ? 'opacity-100' : 'opacity-0 w-0 overflow-hidden'}`}
         >
-          Veera
+          Ogbonnas Memorial
         </h2>
         {!isExpanded && (
           <div className="text-xl font-bold text-primary-base">B</div>
         )}
       </div>
+      
       <nav className="flex-1 p-4 space-y-2 overflow-hidden">
         <NavLink
           to={dashboardRoute}
