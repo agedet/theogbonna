@@ -7,7 +7,6 @@ import SuccessPage from './pages/SuccessPage';
 import LoginPage from './pages/auth/LoginPage';
 import VerifyLogin from './pages/auth/VerifyLogin';
 import SetupPasswordPage from './pages/auth/SetupPasswordPage';
-import ForgotPassword from './pages/auth/Forgotpassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import AdminDashboardPage from './pages/admin/AdminDashboard';
@@ -16,6 +15,7 @@ import { UserRole } from './services/user/types';
 import { DashboardLayout, AdminIndexRedirect } from './components/layout';
 import { ProtectedRoute, GuestRoute } from './components/auth';
 import { URLS } from './utils/routes';
+import ForgotPassword from './pages/auth/ForgotPassword';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
