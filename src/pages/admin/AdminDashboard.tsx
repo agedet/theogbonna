@@ -9,7 +9,8 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuthContext } from '@/context/useAuthContext';
+import { URLS } from '@/utils/routes';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
@@ -391,7 +392,7 @@ type Tab = 'orders' | 'payments';
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
-  const { user, loading: authLoading, logout } = useAuth();
+  const { user, logout } = useAuthContext();
   const [stats,   setStats]   = useState<Stats | null>(null);
   const [tab,     setTab]     = useState<Tab>('orders');
 
@@ -401,21 +402,12 @@ export default function AdminDashboardPage() {
   }, []);
 
   useEffect(() => {
-    if (!authLoading && !user) { navigate('/admin/login'); return; }
     fetchStats();
-  }, [authLoading, user, navigate, fetchStats]);
+  }, [fetchStats]);
 
   async function handleLogout() {
     await logout();
-    navigate('/admin/login');
-  }
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-amber-500" />
-      </div>
-    );
+    navigate(URLS.LOGIN);
   }
 
   const isSuperAdmin = user?.role === 'super_admin';
@@ -431,7 +423,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex items-center gap-2">
             {isSuperAdmin && (
-              <Link to="/super-admin"
+              <Link to={URLS.SUPER_ADMIN_DASHBOARD}
                 className="flex items-center gap-1.5 text-xs text-purple-400 hover:text-purple-300 transition-colors px-3 py-1.5 rounded-lg hover:bg-purple-500/5">
                 <Shield className="size-3.5" />
                 <span className="hidden sm:inline">Super Admin</span>

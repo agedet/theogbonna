@@ -1,15 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import {
-  UserPlus, Users, LogOut, RefreshCw, AlertCircle,
-  CheckCircle2, Loader2, Shield, ChevronRight, Mail,
+  Users, LogOut, RefreshCw, Loader2, Shield, ChevronRight, Mail,
   Briefcase, LayoutDashboard,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useAuth } from '@/hooks/use-auth';
+import { InvitationForm } from '@/components/auth';
+import { useAuthContext } from '@/context/useAuthContext';
+import { URLS } from '@/utils/routes';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
@@ -24,95 +22,6 @@ interface AdminRecord {
   role:            'admin' | 'super_admin';
   isEmailVerified: boolean;
   createdAt:       string;
-}
-
-// ─── Invite form ──────────────────────────────────────────────────────────────
-
-function InviteForm({ onSuccess }: { onSuccess: () => void }) {
-  const [form,     setForm]     = useState({ firstName: '', lastName: '', email: '', jobTitle: '' });
-  const [loading,  setLoading]  = useState(false);
-  const [error,    setError]    = useState<string | null>(null);
-  const [success,  setSuccess]  = useState(false);
-
-  function patch(key: keyof typeof form) {
-    return (e: React.ChangeEvent<HTMLInputElement>) =>
-      setForm(prev => ({ ...prev, [key]: e.target.value }));
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true); setError(null); setSuccess(false);
-    try {
-      await api.post('/admin/invite', {
-        firstName: form.firstName.trim(),
-        lastName:  form.lastName.trim(),
-        email:     form.email.trim(),
-        jobTitle:  form.jobTitle.trim() || undefined,
-      });
-      setSuccess(true);
-      setForm({ firstName: '', lastName: '', email: '', jobTitle: '' });
-      setTimeout(() => { setSuccess(false); onSuccess(); }, 2000);
-    } catch (err) {
-      setError((err as Error).message);
-    } finally { setLoading(false); }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="space-y-1.5">
-          <Label className="text-slate-300">First Name <span className="text-amber-500">*</span></Label>
-          <Input required value={form.firstName} onChange={patch('firstName')}
-            placeholder="Chukwuemeka"
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10" />
-        </div>
-        <div className="space-y-1.5">
-          <Label className="text-slate-300">Last Name <span className="text-amber-500">*</span></Label>
-          <Input required value={form.lastName} onChange={patch('lastName')}
-            placeholder="Ogbonna"
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10" />
-        </div>
-      </div>
-
-      <div className="space-y-1.5">
-        <Label className="text-slate-300">Email Address <span className="text-amber-500">*</span></Label>
-        <Input required type="email" value={form.email} onChange={patch('email')}
-          placeholder="admin@ogbonnamemorial.com"
-          className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10" />
-      </div>
-
-      <div className="space-y-1.5">
-        <Label className="text-slate-300">Job Title <span className="text-slate-600 text-xs">(optional)</span></Label>
-        <Input value={form.jobTitle} onChange={patch('jobTitle')}
-          placeholder="e.g. Event Coordinator"
-          className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10" />
-      </div>
-
-      <AnimatePresence>
-        {error && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="flex items-center gap-2 text-sm text-red-400 overflow-hidden">
-            <AlertCircle className="size-4 shrink-0" />{error}
-          </motion.div>
-        )}
-        {success && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="flex items-center gap-2 text-sm text-emerald-400 overflow-hidden">
-            <CheckCircle2 className="size-4 shrink-0" />Invitation sent successfully!
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <Button type="submit" disabled={loading}
-        className="w-full h-10 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg">
-        {loading
-          ? <><Loader2 className="mr-2 size-4 animate-spin" />Sending…</>
-          : <><UserPlus className="mr-2 size-4" />Send Invitation</>}
-      </Button>
-    </form>
-  );
 }
 
 // ─── Admin list ───────────────────────────────────────────────────────────────
@@ -184,7 +93,7 @@ function AdminList({ admins, loading, onRefresh }: {
 
 export default function SuperAdminPage() {
   const navigate = useNavigate();
-  const { user, loading: authLoading, logout } = useAuth();
+  const { user, logout } = useAuthContext();
   const [admins,      setAdmins]      = useState<AdminRecord[]>([]);
   const [listLoading, setListLoading] = useState(false);
 
@@ -199,22 +108,12 @@ export default function SuperAdminPage() {
   }, []);
 
   useEffect(() => {
-    if (!authLoading && !user) { navigate('/admin/login'); return; }
-    if (!authLoading && user?.role !== 'super_admin') { navigate('/admin'); return; }
     fetchAdmins();
-  }, [authLoading, user, navigate, fetchAdmins]);
+  }, [fetchAdmins]);
 
   async function handleLogout() {
     await logout();
-    navigate('/admin/login');
-  }
-
-  if (authLoading) {
-    return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-amber-500" />
-      </div>
-    );
+    navigate(URLS.LOGIN);
   }
 
   return (
@@ -230,7 +129,7 @@ export default function SuperAdminPage() {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <Link to="/admin"
+            <Link to={URLS.ADMIN_DASHBOARD}
               className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-white transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5">
               <LayoutDashboard className="size-3.5" />
               <span className="hidden sm:inline">Admin Dashboard</span>
@@ -272,7 +171,7 @@ export default function SuperAdminPage() {
                 <p className="text-xs text-slate-500">Send an invitation email to a new admin</p>
               </div>
             </div>
-            <InviteForm onSuccess={fetchAdmins} />
+            <InvitationForm onSuccess={fetchAdmins} />
           </motion.div>
 
           {/* Admin list card */}
