@@ -10,7 +10,7 @@ export default function Hero() {
     <section id="hero" className="relative h-screen flex items-center justify-center px-6 overflow-hidden">
       {/* Hero background image */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-contain bg-center bg-no-repeat lg:bg-cover lg:bg-center"
         style={{ backgroundImage: `url(${heroBg})` }}
       />
       {/* Dark overlay so text remains readable */}
