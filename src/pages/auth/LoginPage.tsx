@@ -11,6 +11,17 @@ export default function LoginPage() {
 
   async function handleLogin(email: string, password: string) {
     const res = await login(email, password);
+
+    if (res.requiresEmailVerification || !res.sessionToken) {
+      sessionStorage.setItem(TOKEN.EMAIL, email);
+      setVerifyPurpose('registration');
+      navigate(URLS.ADMIN_VERIFY_EMAIL, {
+        state: { email, message: res.message },
+        replace: true,
+      });
+      return;
+    }
+
     sessionStorage.setItem(TOKEN.SESSION_TOKEN, res.sessionToken);
     sessionStorage.setItem(TOKEN.EMAIL, email);
     setVerifyPurpose('login');

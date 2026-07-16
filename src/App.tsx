@@ -13,7 +13,11 @@ import VerifyEmail from './pages/auth/VerifyEmail';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import AccessDenied from './pages/auth/AccessDenied';
 import AdminDashboardPage from './pages/admin/AdminDashboard';
+import OrdersPage from './pages/admin/OrdersPage';
+import PaymentsPage from './pages/admin/PaymentsPage';
+import AttendeesPage from './pages/admin/AttendeesPage';
 import SuperAdminPage from './pages/super-admin/SuperAdminPage';
+import UserManagementPage from './pages/super-admin/UserManagementPage';
 import { UserRole } from './services/user/types';
 import { DashboardLayout, AdminIndexRedirect } from './components/layout';
 import { ProtectedRoute, GuestRoute } from './components/auth';
@@ -124,10 +128,9 @@ function App() {
         >
           <Route index element={<AdminIndexRedirect />} />
           <Route path="dashboard" element={<AdminDashboardPage />} />
-          <Route path="attendees" element={<Placeholder title="Attendees" />} />
-          <Route path="orders" element={<Placeholder title="Orders" />} />
-          <Route path="fulfilment" element={<Placeholder title="Fulfilment" />} />
-          <Route path="payments" element={<Placeholder title="Payments" />} />
+          <Route path="attendees" element={<AttendeesPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="payments" element={<PaymentsPage />} />
           <Route path="profile" element={<Placeholder title="Profile" />} />
           <Route path="*" element={<Navigate to={URLS.ERROR_PAGE} replace />} />
         </Route>
@@ -143,10 +146,10 @@ function App() {
         >
           <Route index element={<Navigate to={URLS.SUPER_ADMIN_DASHBOARD} replace />} />
           <Route path="dashboard" element={<SuperAdminPage />} />
-          <Route path="user-management" element={<Placeholder title="User Management" />} />
-          <Route path="attendees" element={<Placeholder title="Attendees" />} />
-          <Route path="orders" element={<Placeholder title="Orders" />} />
-          <Route path="payments" element={<Placeholder title="Payments" />} />
+          <Route path="user-management" element={<UserManagementPage />} />
+          <Route path="attendees" element={<AttendeesPage />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="payments" element={<PaymentsPage />} />
           <Route path="profile" element={<Placeholder title="Profile" />} />
           <Route path="*" element={<Navigate to={URLS.ERROR_PAGE} replace />} />
         </Route>
