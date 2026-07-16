@@ -4,8 +4,8 @@ import Daddy from '@/assets/parents-mordern.jpeg';
 import Mummy from '@/assets/parents-old.jpeg';
 
 const memories = [
-  { id: 1, title: 'The Beginning', img: Daddy, rotation: -12 },
-  { id: 2, title: 'Building a Home', img: Mummy, rotation: -6 },
+  { id: 1, title: 'The Beginning', img: Mummy, rotation: -12 },
+  { id: 2, title: 'Building a Home', img: Daddy, rotation: -6 },
   // { id: 3, title: 'Golden Years', img: DaddyAndMummy, rotation: 0 },
   // { id: 4, title: 'Family First', img: DaddyAndMummy2, rotation: 6 },
   // { id: 5, title: 'Everlasting', img: Daddy, rotation: 12 },
