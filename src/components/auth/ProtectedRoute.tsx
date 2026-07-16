@@ -2,12 +2,12 @@ import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Loader2 } from 'lucide-react';
 import {
-  getDashboardByRole,
   getLoginByPath,
   isRouteAllowedForRole,
 } from '@/utils/routeConfig';
-import { useAuthContext } from '../../context/useAuthContext';
+import { useAuthContext } from '@/context/useAuthContext';
 import type { AppRole } from '@/utils/routeConfig';
+import { URLS } from '@/utils/routes';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -41,12 +41,30 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (allowedRoles && allowedRoles.length > 0) {
     if (!role || !allowedRoles.includes(role)) {
-      return <Navigate to={getDashboardByRole(role)} replace />;
+      const message = encodeURIComponent(
+        'Your account does not have permission to access this area.',
+      );
+      return (
+        <Navigate
+          to={`${URLS.ACCESS_DENIED}?error=${message}`}
+          replace
+          state={{ from: location.pathname }}
+        />
+      );
     }
   }
 
   if (role && !isRouteAllowedForRole(location.pathname, role)) {
-    return <Navigate to={getDashboardByRole(role)} replace />;
+    const message = encodeURIComponent(
+      'You are not allowed to view this page with your current role.',
+    );
+    return (
+      <Navigate
+        to={`${URLS.ACCESS_DENIED}?error=${message}`}
+        replace
+        state={{ from: location.pathname }}
+      />
+    );
   }
 
   return <>{children}</>;

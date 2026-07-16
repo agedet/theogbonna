@@ -1,64 +1,83 @@
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { URLS } from "@/utils/routes";
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { ShieldOff, ArrowLeft, LogIn } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { URLS } from '@/utils/routes';
+import { useAuthContext } from '@/context/useAuthContext';
+import { getDashboardByRole } from '@/utils/routeConfig';
 
-export const AccessDenied = () => {
+export default function AccessDenied() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  
-  // Get error message from URL query parameter
-  const errorMessage = searchParams.get("error");
+  const { isAuthenticated, role, logout } = useAuthContext();
+
+  const errorMessage =
+    searchParams.get('error') ||
+    'You do not have permission to access this page.';
+
+  async function handleSignIn() {
+    if (isAuthenticated) {
+      await logout();
+    }
+    navigate(URLS.ADMIN_LOGIN, { replace: true });
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-dustWhite p-4">
-      <Card className="w-full max-w-md text-center">
-        <CardHeader>
-          <div className="mx-auto w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
-            <svg 
-              className="w-8 h-8 text-red-600" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" 
-              />
-            </svg>
-          </div>
-          <CardTitle className="text-2xl font-bold text-red-600">
-            Access Denied
-          </CardTitle>
-          <CardDescription className="text-base">
-            {errorMessage || "You must be invited to access this platform"}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-sm text-gray-600">
-            Your Google account is not authorized to access this portal. 
-            Please contact your administrator to request access.
-          </p>
-          
-          <div className="pt-4">
-            <Button 
-              onClick={() => navigate(URLS.ADMIN_LOGIN, { replace: true })}
-              className="w-full"
-            >
-              Return to Login
-            </Button>
-          </div>
+    <div className="flex min-h-screen items-center justify-center bg-slate-950 px-4">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="w-full max-w-md space-y-6 text-center"
+      >
+        <div className="mx-auto flex size-16 items-center justify-center rounded-2xl border border-red-500/30 bg-red-500/10">
+          <ShieldOff className="size-8 text-red-400" />
+        </div>
 
-          <div className="text-xs text-gray-500 pt-2">
-            Need help? Contact your system administrator
-          </div>
-        </CardContent>
-      </Card>
+        <div className="space-y-2">
+          <h1 className="font-serif text-3xl text-white">Access Denied</h1>
+          <p className="text-sm leading-relaxed text-slate-400">{errorMessage}</p>
+        </div>
+
+        <p className="text-xs text-slate-500">
+          If you believe this is a mistake, contact your administrator or sign in with an authorized account.
+        </p>
+
+        <div className="flex flex-col gap-3 sm:flex-row">
+          {isAuthenticated && role ? (
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => navigate(getDashboardByRole(role), { replace: true })}
+              className="h-11 flex-1 rounded-xl border-white/10 text-slate-200 hover:bg-white/5 hover:text-white"
+            >
+              <ArrowLeft className="mr-2 size-4" />
+              My dashboard
+            </Button>
+          ) : (
+            <Button
+              asChild
+              variant="outline"
+              className="h-11 flex-1 rounded-xl border-white/10 text-slate-200 hover:bg-white/5 hover:text-white"
+            >
+              <Link to={URLS.HOME}>
+                <ArrowLeft className="mr-2 size-4" />
+                Home
+              </Link>
+            </Button>
+          )}
+          <Button
+            type="button"
+            onClick={() => void handleSignIn()}
+            className="h-11 flex-1 rounded-xl bg-amber-600 font-semibold text-white hover:bg-amber-700"
+          >
+            <LogIn className="mr-2 size-4" />
+            Return to login
+          </Button>
+        </div>
+      </motion.div>
     </div>
   );
-};
+}
 
-
-
+export { AccessDenied };
