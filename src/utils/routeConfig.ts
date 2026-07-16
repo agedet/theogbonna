@@ -55,9 +55,22 @@ const AUTH_GUEST_PATHS = [
   '/admin/auth/reset-password',
   '/admin/auth/setup-password',
   '/admin/auth/verify-email',
+  // Legacy aliases
+  '/admin/login',
+  '/admin/verify-otp',
+  '/admin/forgot-password',
+  '/admin/reset-password',
+  '/admin/setup-password',
+  '/admin/verify-email',
 ];
 
-const PUBLIC_EXACT_PATHS = ['/', '/checkout', '/success'];
+const PUBLIC_EXACT_PATHS = [
+  '/',
+  '/checkout',
+  '/success',
+  '/not-found',
+  '/auth/access-denied',
+];
 
 const matchesAllowedPath = (path: string, allowedPaths: string[]): boolean =>
   allowedPaths.some(allowed => path === allowed || path.startsWith(`${allowed}/`));
@@ -103,6 +116,8 @@ export const isGuestRoute = (path: string): boolean => {
  */
 export const isProtectedRoute = (path: string): boolean => {
   if (isGuestRoute(path)) return false;
+  // Auth subtree under /admin/auth is never a dashboard guard target
+  if (path.startsWith('/admin/auth')) return false;
   return path.startsWith('/admin') || path.startsWith('/super-admin');
 };
 

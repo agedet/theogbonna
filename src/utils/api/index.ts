@@ -165,18 +165,21 @@ import _axios, {
           if (!getIsLoggingOut()) {
             const currentPath = window.location.pathname;
             const isLoginPage =
-              currentPath.includes("/admin/login") ||
-              currentPath.includes("/auth/sign-in");
+              currentPath.includes("/admin/auth/login") ||
+              currentPath.includes("/admin/login");
   
             const isVerifyLoginPage =
-              currentPath.includes("/admin/verify-otp") ||
-              currentPath.includes("/auth/verify-login");
+              currentPath.includes("/admin/auth/verify-otp") ||
+              currentPath.includes("/admin/verify-otp");
   
-            // Never bounce public checkout/success pages to login on API 401
+            // Never bounce public checkout/success/error pages to login on API 401
             const isPublicPage =
               currentPath === "/" ||
               currentPath.startsWith("/checkout") ||
-              currentPath.startsWith("/success");
+              currentPath.startsWith("/success") ||
+              currentPath.startsWith("/not-found") ||
+              currentPath.startsWith("/auth/access-denied") ||
+              currentPath.startsWith("/admin/auth/");
   
             if (!isLoginPage && !isVerifyLoginPage && !isPublicPage) {
               // Use centralized handler - returns true if this is the first call
@@ -222,17 +225,20 @@ import _axios, {
       ) {
         const currentPath = window.location.pathname;
         const isLoginPage =
-          currentPath.includes("/admin/login") ||
-          currentPath.includes("/auth/sign-in");
+          currentPath.includes("/admin/auth/login") ||
+          currentPath.includes("/admin/login");
   
         const isVerifyLoginPage =
-          currentPath.includes("/admin/verify-otp") ||
-          currentPath.includes("/auth/verify-login");
+          currentPath.includes("/admin/auth/verify-otp") ||
+          currentPath.includes("/admin/verify-otp");
   
         const isPublicPage =
           currentPath === "/" ||
           currentPath.startsWith("/checkout") ||
-          currentPath.startsWith("/success");
+          currentPath.startsWith("/success") ||
+          currentPath.startsWith("/not-found") ||
+          currentPath.startsWith("/auth/access-denied") ||
+          currentPath.startsWith("/admin/auth/");
   
         if (!isLoginPage && !isVerifyLoginPage && !isPublicPage) {
           // Use centralized handler - returns true if this is the first call
