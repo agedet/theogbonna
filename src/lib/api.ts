@@ -5,10 +5,17 @@
 const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const { headers: initHeaders, ...rest } = init ?? {};
+
+  const headers = new Headers(initHeaders);
+  if (!headers.has('Content-Type') && !(rest.body instanceof FormData)) {
+    headers.set('Content-Type', 'application/json');
+  }
+
   const res = await fetch(`${BASE}${path}`, {
+    ...rest,
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json', ...init?.headers },
-    ...init,
+    headers,
   });
 
   if (!res.ok) {
@@ -17,7 +24,17 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     throw new Error(msg);
   }
 
-  return res.json() as Promise<T>;
+  // Some endpoints (204) return empty bodies
+  if (res.status === 204) {
+    return undefined as T;
+  }
+
+  const text = await res.text();
+  if (!text) {
+    return undefined as T;
+  }
+
+  return JSON.parse(text) as T;
 }
 
 export const api = {

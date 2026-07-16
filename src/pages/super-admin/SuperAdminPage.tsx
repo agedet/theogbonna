@@ -160,7 +160,7 @@ export default function SuperAdminPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
-            className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6"
+            className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 space-y-6"
           >
             <div className="flex items-center gap-2.5 mb-5">
               <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/20">
@@ -171,6 +171,7 @@ export default function SuperAdminPage() {
                 <p className="text-xs text-slate-500">Send an invitation email to a new admin</p>
               </div>
             </div>
+
             <InvitationForm onSuccess={fetchAdmins} />
           </motion.div>
 
