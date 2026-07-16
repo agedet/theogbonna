@@ -55,7 +55,7 @@ export function InvitationForm({ onSuccess }: InvitationFormProps) {
             required
             value={form.firstName}
             onChange={patch('firstName')}
-            placeholder="Chukwuemeka"
+            placeholder="Clinton"
             className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10"
           />
         </div>
@@ -65,7 +65,7 @@ export function InvitationForm({ onSuccess }: InvitationFormProps) {
             required
             value={form.lastName}
             onChange={patch('lastName')}
-            placeholder="Ogbonna"
+            placeholder="Jackson"
             className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10"
           />
         </div>
