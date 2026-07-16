@@ -4,17 +4,19 @@ export const URLS = {
   SUCCESS: '/success',
   ERROR_PAGE: '/not-found',
 
+  ACCESS_DENIED: '/auth/access-denied',
+
   // Shared admin auth (admin + super_admin)
-  LOGIN: '/admin/login',
-  ADMIN_LOGIN: '/admin/login',
-  ADMIN_VERIFY_OTP: '/admin/verify-otp',
-  ADMIN_FORGOT_PASSWORD: '/admin/forgot-password',
-  ADMIN_RESET_PASSWORD: '/admin/reset-password',
-  ADMIN_SETUP_PASSWORD: '/admin/setup-password',
-  ADMIN_VERIFY_EMAIL: '/admin/verify-email',
-  FORGOT_PASSWORD: '/admin/forgot-password',
-  RESET_PASSWORD: '/admin/reset-password',
-  VERIFY_EMAIL: '/admin/verify-email',
+  LOGIN: '/admin/auth/login',
+  ADMIN_LOGIN: '/admin/auth/login',
+  ADMIN_VERIFY_OTP: '/admin/auth/verify-otp',
+  ADMIN_FORGOT_PASSWORD: '/admin/auth/forgot-password',
+  ADMIN_RESET_PASSWORD: '/admin/auth/reset-password',
+  ADMIN_SETUP_PASSWORD: '/admin/auth/setup-password',
+  ADMIN_VERIFY_EMAIL: '/admin/auth/verify-email',
+  FORGOT_PASSWORD: '/admin/auth/forgot-password',
+  RESET_PASSWORD: '/admin/auth/reset-password',
+  VERIFY_EMAIL: '/admin/auth/verify-email',
 
   // Admin dashboard
   ADMIN: '/admin/dashboard',
@@ -26,7 +28,7 @@ export const URLS = {
   ADMIN_PAYMENTS: '/admin/payments',
 
   // Super admin (same login portal)
-  SUPER_ADMIN_LOGIN: '/admin/login',
+  SUPER_ADMIN_LOGIN: '/admin/auth/login',
   SUPER_ADMIN_DASHBOARD: '/super-admin/dashboard',
   SUPER_ADMIN_USER_MANAGEMENT: '/super-admin/user-management',
   SUPER_ADMIN_ATTENDEES: '/super-admin/attendees',

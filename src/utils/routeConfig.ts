@@ -16,7 +16,7 @@ export const ROLE_ROUTES: Record<AppRole, RoleRouteConfig> = {
   admin: {
     prefix: '/admin',
     dashboard: '/admin/dashboard',
-    login: '/admin/login',
+    login: '/admin/auth/login',
     allowedPaths: [
       '/admin/dashboard',
       '/admin/attendees',
@@ -29,7 +29,7 @@ export const ROLE_ROUTES: Record<AppRole, RoleRouteConfig> = {
   super_admin: {
     prefix: '/super-admin',
     dashboard: '/super-admin/dashboard',
-    login: '/admin/login',
+    login: '/admin/auth/login',
     allowedPaths: [
       '/super-admin/dashboard',
       '/super-admin/user-management',
@@ -49,12 +49,12 @@ export const ROLE_ROUTES: Record<AppRole, RoleRouteConfig> = {
 };
 
 const AUTH_GUEST_PATHS = [
-  '/admin/login',
-  '/admin/verify-otp',
-  '/admin/forgot-password',
-  '/admin/reset-password',
-  '/admin/setup-password',
-  '/admin/verify-email',
+  '/admin/auth/login',
+  '/admin/auth/verify-otp',
+  '/admin/auth/forgot-password',
+  '/admin/auth/reset-password',
+  '/admin/auth/setup-password',
+  '/admin/auth/verify-email',
 ];
 
 const PUBLIC_EXACT_PATHS = ['/', '/checkout', '/success'];

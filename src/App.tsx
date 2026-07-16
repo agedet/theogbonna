@@ -16,6 +16,10 @@ import { DashboardLayout, AdminIndexRedirect } from './components/layout';
 import { ProtectedRoute, GuestRoute } from './components/auth';
 import { URLS } from './utils/routes';
 import ForgotPassword from './pages/auth/ForgotPassword';
+import { useAuthContext } from './context/useAuthContext';
+import { getDashboardByRole } from './utils/routeConfig';
+import { Providers } from './components/providers';
+import { AccessDenied } from './pages/auth/AccessDenied';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -34,9 +38,25 @@ function Placeholder({ title }: { title: string }) {
   );
 }
 
+const CatchAllRedirect = () => {
+  const { isAuthenticated, role, isLoading } = useAuthContext();
+
+  if (isLoading) {
+    return null; // Loading handled by parent
+  }
+
+  if (isAuthenticated && role) {
+    return <Navigate to={getDashboardByRole(role)} replace />;
+  }
+
+  // Default to client login for unauthenticated users
+  return <Navigate to="/admin/auth/login" replace />;
+};
+
 function App() {
   return (
     <BrowserRouter>
+      <Providers>
       <ScrollToTop />
       <Routes>
         {/* Public — not protected */}
@@ -94,9 +114,14 @@ function App() {
           }
         />
 
+        <Route 
+          path="/auth/access-denied" 
+          element={<AccessDenied />} 
+        />
+
         {/* Admin dashboard — admin + super_admin */}
         <Route
-          path="/admin"
+          path="/admin/*"
           element={
             <ProtectedRoute allowedRoles={[UserRole.ADMIN, UserRole.SUPER_ADMIN]}>
               <DashboardLayout />
@@ -114,7 +139,7 @@ function App() {
 
         {/* Super admin dashboard */}
         <Route
-          path="/super-admin"
+          path="/super-admin/*"
           element={
             <ProtectedRoute allowedRoles={[UserRole.SUPER_ADMIN]}>
               <DashboardLayout />
@@ -129,7 +154,10 @@ function App() {
           <Route path="payments" element={<Placeholder title="Payments" />} />
           <Route path="profile" element={<Placeholder title="Profile" />} />
         </Route>
+
+        <Route path='*' element={<CatchAllRedirect />} />
       </Routes>
+      </Providers>
     </BrowserRouter>
   );
 }
