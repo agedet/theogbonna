@@ -8,7 +8,7 @@ export default function ProductSection() {
   const navigate = useNavigate();
 
   return (
-    <section id="asoebi" className="bg-slate-900 px-4 py-16 sm:px-6 sm:py-24 md:py-32">
+    <section id="asoebi" className="bg-background px-4 py-16 sm:px-6 sm:py-24 md:py-32">
       <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 sm:gap-14 lg:grid-cols-2 lg:gap-16">
         {/* Image collage */}
         <div className="relative mx-auto w-full max-w-md pb-16 sm:max-w-lg sm:pb-20 lg:mx-0 lg:max-w-none lg:pb-24">
@@ -27,7 +27,7 @@ export default function ProductSection() {
             viewport={{ once: true }}
             src={Material}
             alt="Asoebi Gele"
-            className="absolute -right-1 bottom-0 z-20 w-[52%] max-w-[14rem] rounded-xl border-4 border-slate-900 object-cover shadow-2xl sm:-right-2 sm:bottom-2 sm:w-[48%] sm:max-w-[16rem] sm:rounded-2xl md:max-w-[18rem] aspect-[3/4]"
+            className="absolute -right-1 bottom-0 z-20 w-[52%] max-w-[14rem] rounded-xl border-4 border-background object-cover shadow-2xl sm:-right-2 sm:bottom-2 sm:w-[48%] sm:max-w-[16rem] sm:rounded-2xl md:max-w-[18rem] aspect-[3/4]"
           />
         </div>
 
@@ -38,31 +38,31 @@ export default function ProductSection() {
           className="space-y-6 sm:space-y-8 lg:mt-0 lg:pl-8 xl:pl-12"
         >
           <div>
-            <h2 className="mb-3 font-serif text-2xl text-white sm:mb-4 sm:text-3xl md:text-4xl">
+            <h2 className="mb-3 font-serif text-2xl text-foreground sm:mb-4 sm:text-3xl md:text-4xl">
               Official Asoebi Material
             </h2>
-            <p className="text-sm leading-relaxed text-slate-400 sm:text-base md:text-lg">
+            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base md:text-lg">
               Honor our parents&apos; memory by adorning this premium selected fabric.
               Each package is carefully curated for our esteemed guests.
             </p>
           </div>
 
-          <div className="space-y-3 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-sm sm:space-y-4 sm:p-6">
-            <div className="flex flex-col gap-1 border-b border-white/10 pb-3 sm:flex-row sm:items-center sm:justify-between sm:pb-4">
-              <span className="text-sm text-slate-300">Material Type</span>
-              <span className="text-sm font-medium text-white sm:text-right">
+          <div className="space-y-3 rounded-2xl border border-border bg-card p-4 sm:space-y-4 sm:p-6">
+            <div className="flex flex-col gap-1 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between sm:pb-4">
+              <span className="text-sm text-muted-foreground">Material Type</span>
+              <span className="text-sm font-medium text-foreground sm:text-right">
                 5 Yards Beaded Lace &amp; Gele
               </span>
             </div>
-            <div className="flex flex-col gap-1 border-b border-white/10 pb-3 sm:flex-row sm:items-center sm:justify-between sm:pb-4">
-              <span className="text-sm text-slate-300">Price</span>
-              <span className="text-lg font-bold text-amber-500 sm:text-xl">
+            <div className="flex flex-col gap-1 border-b border-border pb-3 sm:flex-row sm:items-center sm:justify-between sm:pb-4">
+              <span className="text-sm text-muted-foreground">Price</span>
+              <span className="text-lg font-bold text-amber-600 sm:text-xl">
                 £100 (or NGN Equivalent)
               </span>
             </div>
             <div className="flex flex-col gap-1 pb-1 sm:flex-row sm:items-center sm:justify-between sm:pb-2">
-              <span className="text-sm text-slate-300">Payment Deadline</span>
-              <span className="font-medium text-red-400">September 30, 2026</span>
+              <span className="text-sm text-muted-foreground">Payment Deadline</span>
+              <span className="font-medium text-red-500">September 30, 2026</span>
             </div>
           </div>
 
@@ -73,7 +73,7 @@ export default function ProductSection() {
           >
             Proceed to Get Material
           </Button>
-          <p className="text-center text-[0.7rem] leading-relaxed text-slate-500 sm:text-xs">
+          <p className="text-center text-[0.7rem] leading-relaxed text-muted-foreground sm:text-xs">
             * Delivery is available to your choice destination in Nigeria (cost of delivery to be
             added at checkout).
           </p>

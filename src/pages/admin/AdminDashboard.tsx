@@ -31,13 +31,13 @@ function StatCard({
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, delay: delay ?? 0 }}
-      className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5"
+      className="rounded-2xl border border-border bg-card p-5"
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs text-slate-500 uppercase tracking-wider">{label}</p>
-          <p className="text-2xl font-bold text-white mt-1">{value}</p>
-          {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
+          <p className="text-xs text-muted-foreground uppercase tracking-wider">{label}</p>
+          <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
+          {sub && <p className="text-xs text-muted-foreground mt-0.5">{sub}</p>}
         </div>
         <div className={cn('flex size-9 items-center justify-center rounded-xl border', color)}>
           <Icon className="size-4" />
@@ -71,10 +71,10 @@ export default function AdminDashboardPage() {
   return (
     <div className="p-6 space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-white">
+        <h1 className="text-xl font-semibold text-foreground">
           Welcome {user?.firstName ?? ''}
         </h1>
-        <p className="text-slate-500 text-sm">Ogbonna Memorial — Asoebi Orders</p>
+        <p className="text-muted-foreground text-sm">Ogbonna Memorial — Asoebi Orders</p>
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -111,7 +111,7 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      <div className="flex gap-1 p-1 rounded-xl bg-white/[0.03] border border-white/[0.06] w-fit">
+      <div className="flex gap-1 p-1 rounded-xl bg-muted border border-border w-fit">
         {(['orders', 'payments'] as Tab[]).map(t => (
           <button
             key={t}
@@ -121,7 +121,7 @@ export default function AdminDashboardPage() {
               'px-4 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
               tab === t
                 ? 'bg-amber-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-white/5',
+                : 'text-muted-foreground hover:text-foreground hover:bg-background',
             )}
           >
             {t === 'orders' ? (

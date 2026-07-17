@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LogOut, ArrowRight, Shield } from 'lucide-react';
+import { LogOut, ArrowRight } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import type { SideBarNav } from '@/utils/sidebarNavigation';
@@ -8,6 +8,7 @@ import { useAuthContext } from '@/context/useAuthContext';
 import { cn, scrollbarHiddenClass } from '@/lib/utils';
 import type { AppRole } from '@/utils/routeConfig';
 import { URLS } from '@/utils/routes';
+import OgbonnaLogo from '@/assets/ogbonna-logo.png'
 
 interface DashboardSidebarProps {
   navigationItems: SideBarNav[];
@@ -44,16 +45,18 @@ export const DashboardSidebar = ({
   return (
     <aside
       className={cn(
-        'hidden lg:flex flex-shrink-0 w-64 flex-col overflow-y-auto border-r border-white/10 h-full bg-slate-950',
+        'hidden lg:flex flex-shrink-0 w-64 flex-col overflow-y-auto border-r border-sidebar-border h-full bg-foreground',
         scrollbarHiddenClass,
       )}
     >
       <div className="flex items-center gap-2 px-6 pt-8 pb-6">
-        <div className="flex size-9 items-center justify-center rounded-xl bg-amber-500/10 border border-amber-500/30">
-          <Shield className="size-4 text-amber-400" />
-        </div>
         <div>
-          <h2 className="text-base font-semibold text-white">Ogbonnas Memorial</h2>
+          <img 
+            src={OgbonnaLogo}
+            alt='logo'
+            className="h-16 w-auto object-contain"
+          />
+          {/* <h2 className="text-base font-semibold text-foreground">Ogbonnas Memorial</h2> */}
           {/* Role label intentionally hidden from UI */}
           {/* <p className="text-[10px] text-slate-500 uppercase tracking-wide">
             {isSuperAdmin ? 'Super Admin' : 'Admin'}
@@ -74,7 +77,7 @@ export const DashboardSidebar = ({
                 'flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors',
                 active
                   ? 'bg-amber-600 text-white'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-white',
+                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
               )}
             >
               {Icon && <Icon className="h-5 w-5" />}
@@ -85,18 +88,18 @@ export const DashboardSidebar = ({
         })}
       </nav>
 
-      <div className="px-4 mt-auto pt-4 pb-6 border-t border-white/10">
+      <div className="px-4 mt-auto pt-4 pb-6 border-t border-border">
         {user && (
           <div className="flex items-center gap-3 mb-3 p-2">
-            <Avatar className="h-10 w-10 border border-white/10">
+            <Avatar className="h-10 w-10 border border-border">
               <AvatarImage src={user.picture ?? undefined} alt={displayName} />
               <AvatarFallback className="bg-amber-500/15 text-amber-400">
                 {initials}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate text-white">{displayName}</p>
-              <p className="text-[10px] truncate text-slate-500">{user.email}</p>
+              <p className="text-sm font-medium truncate text-background">{displayName}</p>
+              <p className="text-[10px] truncate text-muted-foreground">{user.email}</p>
             </div>
           </div>
         )}
@@ -109,7 +112,7 @@ export const DashboardSidebar = ({
           variant="ghost"
           size="sm"
           onClick={() => void handleLogout()}
-          className="w-full justify-start gap-2 rounded-xl px-4 text-slate-400 hover:text-red-400 hover:bg-red-500/10"
+          className="w-full justify-start gap-2 rounded-xl px-4 text-muted-foreground hover:text-red-500 hover:bg-red-500/10"
         >
           <LogOut className="h-4 w-4" />
           <span>Logout</span>

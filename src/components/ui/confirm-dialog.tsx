@@ -43,7 +43,7 @@ export function ConfirmDialog({
         <DialogPrimitive.Content
           className={cn(
             'fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2',
-            'rounded-2xl border border-white/10 bg-slate-900 p-6 shadow-xl outline-none',
+            'rounded-2xl border border-white/10 bg-foreground p-6 shadow-xl outline-none',
             'data-[state=open]:animate-in data-[state=closed]:animate-out',
             'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
             'data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95',
@@ -62,7 +62,7 @@ export function ConfirmDialog({
               variant="outline"
               disabled={loading}
               onClick={() => onOpenChange(false)}
-              className="h-9 border-white/10 text-slate-300 hover:bg-white/5 hover:text-white"
+              className="h-9 border-white/10 text-foreground hover:bg-white/5 hover:text-white"
             >
               {cancelLabel}
             </Button>

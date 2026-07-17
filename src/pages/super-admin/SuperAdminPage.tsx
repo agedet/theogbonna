@@ -5,7 +5,6 @@ import {
   UsersRound,
   ShoppingCart,
   CreditCard,
-  Shield,
 } from 'lucide-react';
 import { useAuthContext } from '@/context/useAuthContext';
 import { URLS } from '@/utils/routes';
@@ -48,12 +47,11 @@ export default function SuperAdminPage() {
     <div className="p-6 space-y-6">
       <div>
         <div className="flex items-center gap-2 mb-1">
-          <Shield className="size-5 text-purple-400" />
-          <h1 className="text-xl font-semibold text-white">
-            Welcome back, {user?.firstName ?? 'Super Admin'}
+          <h1 className="text-xl font-semibold text-foreground">
+            Welcome back, {user?.firstName ?? ''}
           </h1>
         </div>
-        <p className="text-slate-500 text-sm">
+        <p className="text-muted-foreground text-sm">
           Manage users, attendees, orders, and payments.
         </p>
       </div>
@@ -68,13 +66,13 @@ export default function SuperAdminPage() {
           >
             <Link
               to={item.url}
-              className="block rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 hover:bg-white/[0.05] transition-colors h-full"
+              className="block rounded-2xl border border-border bg-card p-5 hover:bg-muted transition-colors h-full"
             >
               <div className={`flex size-10 items-center justify-center rounded-xl border mb-3 ${item.color}`}>
                 <item.icon className="size-4" />
               </div>
-              <h2 className="text-base font-semibold text-white">{item.title}</h2>
-              <p className="text-xs text-slate-500 mt-1">{item.description}</p>
+              <h2 className="text-base font-semibold text-foreground">{item.title}</h2>
+              <p className="text-xs text-muted-foreground mt-1">{item.description}</p>
             </Link>
           </motion.div>
         ))}
