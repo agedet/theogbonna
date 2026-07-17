@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface AuthLayoutProps {
