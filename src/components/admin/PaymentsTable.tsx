@@ -117,7 +117,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-9 text-sm"
+            className="pl-9 bg-white/5 border-foreground/50 text-foreground placeholder:text-foreground h-9 text-sm"
           />
         </div>
         <div className="relative">
@@ -127,10 +127,10 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
               setFilter(e.target.value);
               setPage(1);
             }}
-            className="h-9 rounded-lg border border-white/10 bg-white/5 text-sm text-white px-3 pr-8 appearance-none focus:outline-none focus:ring-1 focus:ring-amber-500/50 cursor-pointer"
+            className="h-9 rounded-lg border border-foreground bg-white/5 text-sm text-foreground px-3 pr-8 appearance-none focus:outline-none focus:ring-1 focus:ring-amber-500/50 cursor-pointer"
           >
             {['', ...PAYMENT_STATUSES].map(s => (
-              <option key={s || 'all'} value={s} className="bg-slate-900">
+              <option key={s || 'all'} value={s} className="bg-slate-900 text-white">
                 {s || 'All'}
               </option>
             ))}
