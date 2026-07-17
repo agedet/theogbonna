@@ -86,7 +86,7 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-9 text-sm"
+            className="pl-9 bg-white/5 border-foreground/50 text-foreground placeholder:text-slate-600 h-9 text-sm"
           />
         </div>
         <button
