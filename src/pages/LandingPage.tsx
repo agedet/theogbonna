@@ -9,7 +9,7 @@ import ScrollRevealText from "@/components/landingPage/ScrollRevealText";
 
 export default function LandingPage() {
   return (
-    <div className="bg-background min-h-screen text-foreground font-sans selection:bg-amber-700/50">
+    <div className="bg-slate-950 min-h-screen text-slate-200 font-sans selection:bg-amber-700/50">
       <Navbar />
       <Hero />
       <ScrollRevealText />

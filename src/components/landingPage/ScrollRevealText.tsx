@@ -208,9 +208,9 @@ export default function ScrollRevealText() {
   // Pre-build word chunks for each line
   const line1Words = buildWords(LINE_1, 0);
   const line2Words = buildWords(LINE_2_DIM, line1Chars.length + 1);
-
+//  backgroundColor: '#050505',
   return (
-    <section id="memories" style={{ backgroundColor: '#050505', position: 'relative' }}>
+    <section id="memories" className='bg-slate-950' style={{ position: 'relative' }}>
       <ParticleCanvas />
 
       {/* Top spacer */}

@@ -100,8 +100,8 @@ export default function SuccessPage() {
   const firstName = fullName.split(' ')[0];
 
   return (
-    <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
+    <div className="flex min-h-screen flex-col bg-slate-950 text-slate-200">
+      <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
         <div className="mx-auto flex h-[72px] max-w-xl items-center justify-between px-4 sm:h-[100px] sm:px-6">
           <Link to="/">
             <img
@@ -125,10 +125,10 @@ export default function SuccessPage() {
             <AnimatedCheckmark />
 
             <div>
-              <h1 className="mt-4 font-serif text-xl text-foreground sm:text-2xl">
+              <h1 className="mt-4 font-serif text-xl text-white sm:text-2xl">
                 Order received, {firstName}!
               </h1>
-              <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground px-1">
+              <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-slate-400 px-1">
                 Thank you for your order. A confirmation has been sent to{' '}
                 <span className="break-all text-amber-600">{email}</span>.
               </p>
@@ -139,28 +139,28 @@ export default function SuccessPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45, delay: 0.2, ease: 'easeOut' }}
-            className="overflow-hidden rounded-2xl border border-border bg-card"
+            className="overflow-hidden rounded-2xl border  border-white/10 bg-white/[0.03]"
           >
-            <div className="border-b border-border px-4 py-4 sm:px-5">
-              <p className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">Order Summary</p>
+            <div className="border-b border-white/[0.06] px-4 py-4 sm:px-5">
+              <p className="text-xs font-semibold tracking-wider text-slate-500 uppercase">Order Summary</p>
             </div>
 
-            <div className="divide-y divide-border">
+            <div className="divide-y divide-white/[0.06]">
               <div className="flex flex-col gap-1 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-                <span className="text-sm text-muted-foreground">Order ID</span>
+                <span className="text-sm text-slate-400">Order ID</span>
                 <div className="flex min-w-0 items-center gap-2">
-                  <span className="truncate font-mono text-sm text-foreground">{orderId}</span>
+                  <span className="truncate font-mono text-sm text-white">{orderId}</span>
                   <CopyButton text={orderId} label="order ID" />
                 </div>
               </div>
 
               <div className="flex items-center justify-between px-4 py-3 sm:px-5">
-                <span className="text-sm text-muted-foreground">Amount</span>
+                <span className="text-sm text-slate-400">Amount</span>
                 <span className="font-bold text-amber-600">£{totalPrice}</span>
               </div>
 
               <div className="flex flex-col gap-2 px-4 py-3 sm:flex-row sm:items-center sm:justify-between sm:px-5">
-                <span className="text-sm text-muted-foreground">Status</span>
+                <span className="text-sm text-slate-400">Status</span>
                 <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-0.5 text-xs font-medium text-emerald-600">
                   <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
                   Receipt Submitted
@@ -168,7 +168,7 @@ export default function SuccessPage() {
               </div>
               {receiptUrl && (
                 <div className="flex items-center justify-between px-4 py-3 sm:px-5">
-                  <span className="text-sm text-muted-foreground">Receipt</span>
+                  <span className="text-sm text-slate-400">Receipt</span>
                   <a
                     href={receiptUrl}
                     target="_blank"
@@ -191,7 +191,7 @@ export default function SuccessPage() {
             <Button
               asChild
               variant="outline"
-              className="h-12 flex-1 rounded-xl border-border text-foreground hover:bg-muted hover:text-foreground"
+              className="h-12 flex-1 rounded-xl border-white/10 text-slate-900 hover:bg-white/10 hover:text-white"
             >
               <Link to="/">
                 <ArrowLeft className="mr-2 size-4" />
