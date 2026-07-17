@@ -111,7 +111,7 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      <div className="flex gap-1 p-1 rounded-xl bg-muted border border-border w-fit">
+      <div className="flex gap-1 p-1 rounded-xl bg-white border border-border w-fit">
         {(['orders', 'payments'] as Tab[]).map(t => (
           <button
             key={t}
