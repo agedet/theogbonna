@@ -50,48 +50,48 @@ export function InvitationForm({ onSuccess }: InvitationFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
-          <Label className="text-slate-300">First Name <span className="text-amber-500">*</span></Label>
+          <Label className="text-foreground/95">First Name <span className="text-amber-500">*</span></Label>
           <Input
             required
             value={form.firstName}
             onChange={patch('firstName')}
             placeholder="Clinton"
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10"
+            className="bg-white/5 border-white/10 text-foreground placeholder:text-slate-600 h-10"
           />
         </div>
         <div className="space-y-1.5">
-          <Label className="text-slate-300">Last Name <span className="text-amber-500">*</span></Label>
+          <Label className="text-foreground/95">Last Name <span className="text-amber-500">*</span></Label>
           <Input
             required
             value={form.lastName}
             onChange={patch('lastName')}
             placeholder="Jackson"
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10"
+            className="bg-white/5 border-white/10 text-foreground placeholder:text-slate-600 h-10"
           />
         </div>
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-slate-300">Email Address <span className="text-amber-500">*</span></Label>
+        <Label className="text-foreground/95">Email Address <span className="text-amber-500">*</span></Label>
         <Input
           required
           type="email"
           value={form.email}
           onChange={patch('email')}
           placeholder="admin@ogbonnamemorial.com"
-          className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10"
+          className="bg-white/5 border-white/10 text-foreground placeholder:text-slate-600 h-10"
         />
       </div>
 
       <div className="space-y-1.5">
-        <Label className="text-slate-300">
+        <Label className="text-foreground/95">
           Job Title <span className="text-slate-600 text-xs">(optional)</span>
         </Label>
         <Input
           value={form.jobTitle}
           onChange={patch('jobTitle')}
           placeholder="e.g. Event Coordinator"
-          className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-10"
+          className="bg-white/5 border-white/10 text-foreground placeholder:text-slate-600 h-10"
         />
       </div>
 
