@@ -103,7 +103,7 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/[0.06] bg-white/[0.02]">
+              <tr className="border-b border-white/[0.06] bg-foreground">
                 {[
                   'Name',
                   'Email',
@@ -114,7 +114,7 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
                 ].map(h => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                    className="px-4 py-3 text-left text-xs font-semibold text-background uppercase tracking-wider whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -125,27 +125,27 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
               {loading && attendees.length === 0 ? (
                 <tr>
                   <td colSpan={colSpan} className="px-4 py-10 text-center">
-                    <Loader2 className="size-5 animate-spin text-slate-600 mx-auto" />
+                    <Loader2 className="size-5 animate-spin text-foreground mx-auto" />
                   </td>
                 </tr>
               ) : attendees.length === 0 ? (
                 <tr>
-                  <td colSpan={colSpan} className="px-4 py-10 text-center text-slate-600 text-sm">
+                  <td colSpan={colSpan} className="px-4 py-10 text-center text-foreground text-sm">
                     No attendees found.
                   </td>
                 </tr>
               ) : (
                 attendees.map(a => (
-                  <tr key={a.id} className="hover:bg-white/[0.02] transition-colors">
-                    <td className="px-4 py-3 font-medium text-white">
+                  <tr key={a.id} className="hover:bg-sidebar transition-colors">
+                    <td className="px-4 py-3 font-medium text-foreground">
                       {a.firstName} {a.lastName}
                     </td>
-                    <td className="px-4 py-3 text-slate-400 text-xs">{a.email}</td>
-                    <td className="px-4 py-3 text-slate-400 text-xs">
+                    <td className="px-4 py-3 text-foreground/95 text-xs">{a.email}</td>
+                    <td className="px-4 py-3 text-foreground/95 text-xs">
                       {[a.city, a.state, a.country].filter(Boolean).join(', ') || '—'}
                     </td>
-                    <td className="px-4 py-3 text-slate-300">{a._count?.orders ?? 0}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
+                    <td className="px-4 py-3 text-foreground">{a._count?.orders ?? 0}</td>
+                    <td className="px-4 py-3 text-forground/95 text-xs whitespace-nowrap">
                       {new Date(a.createdAt).toLocaleDateString('en-GB', {
                         day: '2-digit',
                         month: 'short',
@@ -155,7 +155,7 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
                     {canDelete && (
                       <td className="px-4 py-3">
                         {busyId === a.id ? (
-                          <Loader2 className="size-4 animate-spin text-slate-500" />
+                          <Loader2 className="size-4 animate-spin text-foreground/90" />
                         ) : (
                           <button
                             type="button"

@@ -51,7 +51,7 @@ export default function MemoryLane() {
   };
 
   return (
-    <section className="overflow-hidden bg-slate-950 px-3 py-16 sm:px-4 sm:py-24 md:px-6 md:py-32">
+    <section className="overflow-hidden bg-background px-3 py-16 sm:px-4 sm:py-24 md:px-6 md:py-32">
       <div className="mx-auto max-w-7xl">
         <h3 className="mb-10 text-center font-serif text-2xl text-amber-500 sm:mb-14 sm:text-3xl md:mb-20">
           Cherished Moments
@@ -70,7 +70,7 @@ export default function MemoryLane() {
                 onFocus={() => setHoveredIndex(i)}
                 onBlur={() => setHoveredIndex(null)}
                 onClick={() => setHoveredIndex(i)}
-                className="absolute top-1/2 left-1/2 flex h-[200px] w-[130px] -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col rounded-[1.25rem] border border-white/10 bg-gradient-to-b from-[#171717] to-[#050505] p-2 shadow-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 sm:h-[240px] sm:w-[160px] sm:rounded-[1.5rem] sm:p-2.5 md:h-[320px] md:w-[220px] md:rounded-[2rem] md:p-3 lg:h-[360px] lg:w-[260px]"
+                className="absolute top-1/2 left-1/2 flex h-[200px] w-[130px] -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col rounded-[1.25rem] border border-white/10 bg-gradient-to-b from-[#171717] to-[#050505] p-2 shadow-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-500/50 sm:h-[240px] sm:w-[160px] sm:rounded-[1.5rem] sm:p-2.5 md:h-[320px] md:w-[220px] md:rounded-[2rem] md:p-3 lg:h-[460px] lg:w-[360px]"
                 style={{ zIndex }}
                 animate={{ x, y, scale, rotate }}
                 transition={{ type: 'spring', stiffness: 100, damping: 40 }}

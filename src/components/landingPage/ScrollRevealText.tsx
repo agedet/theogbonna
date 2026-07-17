@@ -143,6 +143,26 @@ function ParticleCanvas() {
   );
 }
 
+// ─── Word-aware char renderer ─────────────────────────────────────────────────
+
+interface WordChunk {
+  word: string;       // the word text (no spaces)
+  startIndex: number; // global char index of the first character
+}
+
+/** Splits a line into word chunks, tracking the global char offset of each. */
+function buildWords(text: string, globalOffset: number): WordChunk[] {
+  const chunks: WordChunk[] = [];
+  let i = 0;
+  while (i < text.length) {
+    if (text[i] === ' ') { i++; continue; }
+    const start = i;
+    while (i < text.length && text[i] !== ' ') i++;
+    chunks.push({ word: text.slice(start, i), startIndex: globalOffset + start });
+  }
+  return chunks;
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 
 const LINE_1 = "A legacy of love, a lifetime of warmth.";
@@ -155,6 +175,7 @@ function buildChars(text: string) {
 
 export default function ScrollRevealText() {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -170,13 +191,9 @@ export default function ScrollRevealText() {
 
   const line1Chars = buildChars(LINE_1);
   const line2DimChars = buildChars(LINE_2_DIM);
-  // const line2LitChars = buildChars(LINE_2_LIT);
 
   const allChars = [...line1Chars, ' ', ...line2DimChars];
   const totalChars = allChars.length;
-
-  const line1End = line1Chars.length + 1;
-  // const line2DimEnd = line1End + line2DimChars.length + 1;
 
   function getCharRange(globalIndex: number): [number, number] {
     const startFrac = PHASE1_START + (globalIndex / totalChars) * (PHASE1_END - PHASE1_START);
@@ -188,15 +205,19 @@ export default function ScrollRevealText() {
   const subtextOpacity = useTransform(smoothProgress, [PHASE3_START, PHASE3_END], [0, 1]);
   const subtextY = useTransform(smoothProgress, [PHASE3_START, PHASE3_END], [24, 0]);
 
+  // Pre-build word chunks for each line
+  const line1Words = buildWords(LINE_1, 0);
+  const line2Words = buildWords(LINE_2_DIM, line1Chars.length + 1);
+
   return (
     <section id="memories" style={{ backgroundColor: '#050505', position: 'relative' }}>
       <ParticleCanvas />
 
       {/* Top spacer */}
-      <div style={{ height: '50vh', position: 'relative', zIndex: 10 }} />
+      <div style={{ height: isMobile ? '10vh' : '30vh', position: 'relative', zIndex: 10 }} />
 
-      {/* 400vh scroll track */}
-      <div ref={sectionRef} style={{ height: '400vh', width: '100%', position: 'relative' }}>
+      {/* scroll track */}
+      <div ref={sectionRef} style={{ height: isMobile ? '190vh' : '350vh', width: '100%', position: 'relative' }}>
         {/* Sticky viewport */}
         <div
           style={{
@@ -208,7 +229,7 @@ export default function ScrollRevealText() {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: '0 1.5rem',
+            padding: '0 1.25rem',
             zIndex: 10,
           }}
         >
@@ -217,71 +238,57 @@ export default function ScrollRevealText() {
             style={{
               textAlign: 'center',
               fontWeight: 500,
-              lineHeight: 1.15,
+              lineHeight: 1.2,
               letterSpacing: '-0.02em',
               zIndex: 20,
               maxWidth: '100rem',
             }}
-            className="text-2xl md:text-3xl lg:text-4xl xl:text-6xl"
+            className="text-5xl sm:text-5xl md:text-5xl lg:text-6xl xl:text-6xl"
           >
             {/* Line 1 — dims later */}
-            <div>
-              {line1Chars.map((char, i) => {
-                const [s, e] = getCharRange(i);
-                return (
-                  <AnimatedChar
-                    key={`l1-${i}`}
-                    char={char}
-                    scrollYProgress={smoothProgress}
-                    start={s}
-                    end={e}
-                    dims={true}
-                    dimStart={PHASE3_START}
-                    dimEnd={PHASE3_END}
-                  />
-                );
-              })}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 0.25em' }}>
+              {line1Words.map(({ word, startIndex }, wi) => (
+                <span key={`l1w-${wi}`} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+                  {word.split('').map((char, ci) => {
+                    const [s, e] = getCharRange(startIndex + ci);
+                    return (
+                      <AnimatedChar
+                        key={`l1-${startIndex + ci}`}
+                        char={char}
+                        scrollYProgress={smoothProgress}
+                        start={s}
+                        end={e}
+                        dims={true}
+                        dimStart={PHASE3_START}
+                        dimEnd={PHASE3_END}
+                      />
+                    );
+                  })}
+                </span>
+              ))}
             </div>
 
             {/* Line 2 */}
-            <div style={{ marginTop: '0.25em' }}>
-              <span>
-                {line2DimChars.map((char, i) => {
-                  const globalIndex = line1End + i;
-                  const [s, e] = getCharRange(globalIndex);
-                  return (
-                    <AnimatedChar
-                      key={`l2d-${i}`}
-                      char={char}
-                      scrollYProgress={smoothProgress}
-                      start={s}
-                      end={e}
-                      dims={true}
-                      dimStart={PHASE3_START}
-                      dimEnd={PHASE3_END}
-                    />
-                  );
-                })}
-              </span>
-              {/* <span>
-                {' '}
-                {line2LitChars.map((char, i) => {
-                  const globalIndex = line2DimEnd + i;
-                  const [s, e] = getCharRange(globalIndex);
-                  return (
-                    <AnimatedChar
-                      key={`l2l-${i}`}
-                      char={char}
-                      scrollYProgress={smoothProgress}
-                      start={s}
-                      end={e}
-                      dims={false}
-                      dimStart={PHASE3_START}
-                      dimEnd={PHASE3_END}
-                    />
-                  );
-                })}
-              </span> */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '0 0.25em', marginTop: '0.25em' }}>
+              {line2Words.map(({ word, startIndex }, wi) => (
+                <span key={`l2w-${wi}`} style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+                  {word.split('').map((char, ci) => {
+                    const [s, e] = getCharRange(startIndex + ci);
+                    return (
+                      <AnimatedChar
+                        key={`l2-${startIndex + ci}`}
+                        char={char}
+                        scrollYProgress={smoothProgress}
+                        start={s}
+                        end={e}
+                        dims={true}
+                        dimStart={PHASE3_START}
+                        dimEnd={PHASE3_END}
+                      />
+                    );
+                  })}
+                </span>
+              ))}
             </div>
           </div>
 
@@ -290,18 +297,18 @@ export default function ScrollRevealText() {
             style={{
               opacity: subtextOpacity,
               y: subtextY,
-              marginTop: '3rem',
-              maxWidth: '42rem',
+              marginTop: '2rem',
+              maxWidth: '36rem',
+              width: '100%',
               zIndex: 20,
               textAlign: 'center',
+              padding: '0 0.5rem',
             }}
           >
             <p
-              style={{ color: '#9CA3AF', fontSize: '1rem', fontFamily: 'monospace', letterSpacing: '0.05em', lineHeight: 1.8 }}
-              className="md:text-sm"
+              style={{ color: '#9CA3AF', fontFamily: 'monospace', letterSpacing: '0.05em', lineHeight: 1.8 }}
+              className="text-xs sm:text-sm md:text-base"
             >
-              {/* A legacy of love, a lifetime of warmth.  */}
-              {/* Their hands guided us, their wisdom shaped us. */}
               Their memories will forever illuminate our paths, a timeless reminder of who we are and where we come from.
             </p>
           </motion.div>
@@ -309,7 +316,7 @@ export default function ScrollRevealText() {
       </div>
 
       {/* Bottom spacer */}
-      <div style={{ height: '50vh', position: 'relative', zIndex: 10 }} />
+      <div style={{ height: isMobile ? '10vh' : '30vh', position: 'relative', zIndex: 10 }} />
     </section>
   );
 }

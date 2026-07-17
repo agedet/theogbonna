@@ -17,14 +17,14 @@ export function DashboardLayout(_props: DashboardLayoutProps = {}) {
   const navigationItems = getSidebarNavForRole(role);
 
   return (
-    <div className="h-screen bg-slate-950 flex flex-col overflow-hidden font-sans text-slate-200">
+    <div className="h-screen bg-background flex flex-col overflow-hidden font-sans text-foreground">
       <div className={cn('flex flex-1 overflow-hidden h-screen')}>
         <DashboardSidebar
           navigationItems={navigationItems}
           dashboardType={dashboardType}
           user={user}
         />
-        <main className="flex-1 overflow-y-auto bg-slate-950">
+        <main className="flex-1 overflow-y-auto bg-background">
           <Outlet />
         </main>
       </div>

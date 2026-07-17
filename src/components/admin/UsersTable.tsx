@@ -113,15 +113,15 @@ export function UsersTable({ currentUserId, onChanged }: UsersTableProps) {
         </button>
       </div>
 
-      <div className="rounded-xl border border-white/[0.08] overflow-hidden">
+      <div className="rounded-xl text-foreground border border-background/10 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/[0.06] bg-white/[0.02]">
+              <tr className="border-b border-foreground bg-foreground">
                 {['Name', 'Email', 'Job title', 'Status', 'Role', 'Actions'].map(h => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                    className="px-4 py-3 text-left text-xs font-semibold text-background uppercase tracking-wider whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -145,17 +145,17 @@ export function UsersTable({ currentUserId, onChanged }: UsersTableProps) {
                 admins.map(a => {
                   const isSelf = a.id === currentUserId;
                   return (
-                    <tr key={a.id} className="hover:bg-white/[0.02] transition-colors">
+                    <tr key={a.id} className="hover:bg-border text-foreground transition-colors">
                       <td className="px-4 py-3">
-                        <p className="font-medium text-white">
+                        <p className="font-medium text-foreground">
                           {a.firstName} {a.lastName}
                           {isSelf ? (
-                            <span className="text-slate-500 font-normal"> (you)</span>
+                            <span className="text-muted-foreground font-normal"> (you)</span>
                           ) : null}
                         </p>
                       </td>
-                      <td className="px-4 py-3 text-slate-400 text-xs">{a.email}</td>
-                      <td className="px-4 py-3 text-slate-400 text-xs">{a.jobTitle ?? '—'}</td>
+                      <td className="px-4 py-3 text-foreground text-xs">{a.email}</td>
+                      <td className="px-4 py-3 text-foreground text-xs">{a.jobTitle ?? '—'}</td>
                       <td className="px-4 py-3">
                         {a.isEmailVerified ? (
                           <span className="text-xs px-2 py-0.5 rounded-full border bg-emerald-500/10 border-emerald-500/20 text-emerald-400">
@@ -169,7 +169,7 @@ export function UsersTable({ currentUserId, onChanged }: UsersTableProps) {
                       </td>
                       <td className="px-4 py-3">
                         {busyId === a.id ? (
-                          <Loader2 className="size-4 animate-spin text-slate-500" />
+                          <Loader2 className="size-4 animate-spin text-foreground" />
                         ) : isSelf ? (
                           <span
                             className={cn(
@@ -188,16 +188,16 @@ export function UsersTable({ currentUserId, onChanged }: UsersTableProps) {
                               onChange={e =>
                                 void updateRole(a.id, e.target.value as 'admin' | 'super_admin')
                               }
-                              className="h-8 rounded-lg border border-white/10 bg-white/5 text-xs text-white px-2 pr-7 appearance-none focus:outline-none focus:ring-1 focus:ring-amber-500/50 cursor-pointer"
+                              className="h-8 rounded-lg border border-foreground bg-background text-xs text-foreground px-2 pr-7 appearance-none focus:outline-none focus:ring-1 focus:ring-amber-500/50 cursor-pointer"
                             >
-                              <option value="admin" className="bg-slate-900">
+                              <option value="admin" className="bg-foreground">
                                 Admin
                               </option>
                               <option value="super_admin" className="bg-slate-900">
                                 Super Admin
                               </option>
                             </select>
-                            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 size-3 text-slate-400 pointer-events-none" />
+                            <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 size-3 text-slate-500 pointer-events-none" />
                           </div>
                         )}
                       </td>

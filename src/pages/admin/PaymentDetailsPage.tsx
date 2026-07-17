@@ -80,10 +80,10 @@ export default function PaymentDetailsPage() {
   if (error || !payment) {
     return (
       <div className="p-6 space-y-4">
-        <Link to={listPath} className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white">
+        <Link to={listPath} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-4" /> Back to payments
         </Link>
-        <p className="text-sm text-red-400">{error ?? 'Payment not found.'}</p>
+        <p className="text-sm text-red-500">{error ?? 'Payment not found.'}</p>
       </div>
     );
   }
@@ -98,23 +98,23 @@ export default function PaymentDetailsPage() {
         <div>
           <Link
             to={listPath}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-300 mb-2"
+            className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground mb-2"
           >
             <ArrowLeft className="size-3.5" /> Back to payments
           </Link>
-          <h1 className="text-xl font-semibold text-white">
+          <h1 className="text-xl font-semibold text-foreground">
             {attendee
               ? `${attendee.firstName} ${attendee.lastName}`
               : order?.fullName ?? 'Payment'}
           </h1>
-          <p className="text-sm text-slate-500 mt-0.5">Payment details</p>
+          <p className="text-sm text-muted-foreground mt-0.5">Payment details</p>
         </div>
         <StatusBadge status={payment.status} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <section className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 space-y-3">
-          <h2 className="text-sm font-semibold text-white">Payment</h2>
+        <section className="rounded-2xl border border-border bg-card p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-foreground">Payment</h2>
           <DetailRow label="Payment ID" value={payment.id} mono />
           <DetailRow label="Reference" value={payment.reference} mono />
           <DetailRow
@@ -133,31 +133,31 @@ export default function PaymentDetailsPage() {
             })}
           />
           <div>
-            <p className="text-xs text-slate-500 mb-1">Status</p>
+            <p className="text-xs text-muted-foreground mb-1">Status</p>
             <StatusBadge status={payment.status} />
           </div>
           <div className="pt-1">
-            <p className="text-xs text-slate-500 mb-1">Receipt</p>
+            <p className="text-xs text-muted-foreground mb-1">Receipt</p>
             {receiptUrl ? (
               <a
                 href={receiptUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300"
+                className="inline-flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700"
               >
                 View receipt <ExternalLink className="size-3.5" />
               </a>
             ) : (
-              <p className="text-sm text-slate-500">Not submitted yet</p>
+              <p className="text-sm text-muted-foreground">Not submitted yet</p>
             )}
           </div>
-          <p className="text-xs text-slate-600 pt-2 border-t border-white/[0.06]">
+          <p className="text-xs text-muted-foreground pt-2 border-t border-border">
             Receipt submitted ≠ successful payment. Status becomes Success only after verification.
           </p>
         </section>
 
-        <section className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 space-y-3">
-          <h2 className="text-sm font-semibold text-white">Attendee</h2>
+        <section className="rounded-2xl border border-border bg-card p-5 space-y-3">
+          <h2 className="text-sm font-semibold text-foreground">Attendee</h2>
           {attendee ? (
             <>
               <DetailRow
@@ -178,21 +178,21 @@ export default function PaymentDetailsPage() {
               )}
             </>
           ) : (
-            <p className="text-sm text-slate-500">No attendee linked.</p>
+            <p className="text-sm text-muted-foreground">No attendee linked.</p>
           )}
         </section>
       </div>
 
-      <section className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-white">Linked order</h2>
+      <section className="rounded-2xl border border-border bg-card p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-foreground">Linked order</h2>
         {order ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <DetailRow label="Customer" value={order.fullName} />
             <DetailRow label="Total" value={`£${order.totalPrice}`} accent />
             <div>
-              <p className="text-xs text-slate-500 mb-1">Order status</p>
+              <p className="text-xs text-muted-foreground mb-1">Order status</p>
               <StatusBadge status={order.status} />
-              <p className="text-xs text-slate-600 mt-1">{formatStatusLabel(order.status)}</p>
+              <p className="text-xs text-muted-foreground mt-1">{formatStatusLabel(order.status)}</p>
             </div>
             {order.quantity != null && (
               <DetailRow label="Quantity" value={`${order.quantity} set(s)`} />
@@ -203,14 +203,14 @@ export default function PaymentDetailsPage() {
             <div className="sm:col-span-2">
               <Link
                 to={`${ordersBase}/${order.id}`}
-                className="text-sm text-amber-400 hover:text-amber-300"
+                className="text-sm text-amber-600 hover:text-amber-700"
               >
                 Open order details →
               </Link>
             </div>
           </div>
         ) : (
-          <p className="text-sm text-slate-500">No order linked.</p>
+          <p className="text-sm text-muted-foreground">No order linked.</p>
         )}
       </section>
     </div>
@@ -230,14 +230,14 @@ function DetailRow({
 }) {
   return (
     <div>
-      <p className="text-xs text-slate-500 mb-0.5">{label}</p>
+      <p className="text-xs text-muted-foreground mb-0.5">{label}</p>
       <p
         className={
           accent
-            ? 'text-sm font-medium text-amber-400'
+            ? 'text-sm font-medium text-amber-600'
             : mono
-              ? 'text-sm text-slate-300 font-mono break-all'
-              : 'text-sm text-slate-200'
+              ? 'text-sm text-foreground font-mono break-all'
+              : 'text-sm text-foreground'
         }
       >
         {value}
