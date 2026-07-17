@@ -160,11 +160,11 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-border bg-muted/50">
+              <tr className="border-b border-border bg-foreground">
                 {['Customer', 'Qty', 'Total', 'Date', 'Receipt', 'Status', 'Actions'].map(h => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap"
+                    className="px-4 py-3 text-left text-xs font-semibold text-background uppercase tracking-wider whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -194,12 +194,12 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                       >
                         {o.fullName}
                       </Link>
-                      <p className="text-xs text-muted-foreground mt-0.5">{o.email}</p>
-                      <p className="text-xs text-muted-foreground">{o.phone}</p>
+                      <p className="text-xs text-foreground mt-0.5">{o.email}</p>
+                      <p className="text-xs text-foreground">{o.phone}</p>
                     </td>
                     <td className="px-4 py-3 text-foreground">{o.quantity}</td>
-                    <td className="px-4 py-3 font-medium text-amber-600">£{o.totalPrice}</td>
-                    <td className="px-4 py-3 text-muted-foreground text-xs whitespace-nowrap">
+                    <td className="px-4 py-3 font-medium text-amber-900">£{o.totalPrice}</td>
+                    <td className="px-4 py-3 text-foreground text-xs whitespace-nowrap">
                       {new Date(o.createdAt).toLocaleDateString('en-GB', {
                         day: '2-digit',
                         month: 'short',
@@ -217,7 +217,7 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                           View <ExternalLink className="size-3" />
                         </a>
                       ) : (
-                        <span className="text-muted-foreground text-xs">—</span>
+                        <span className="text-foreground text-xs">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -225,7 +225,7 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                     </td>
                     <td className="px-4 py-3">
                       {busyId === o.id ? (
-                        <Loader2 className="size-4 animate-spin text-slate-500" />
+                        <Loader2 className="size-4 animate-spin text-foreground" />
                       ) : (
                         <div className="flex items-center gap-2">
                           <Link

@@ -151,11 +151,11 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/[0.06] bg-white/[0.02]">
+              <tr className="border-b border-white/[0.06] bg-foreground">
                 {['Buyer', 'Reference', 'Amount', 'Date', 'Receipt', 'Status', 'Actions'].map(h => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                    className="px-4 py-3 text-left text-xs font-semibold text-background uppercase tracking-wider whitespace-nowrap"
                   >
                     {h}
                   </th>
@@ -166,12 +166,12 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
               {loading && txns.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-10 text-center">
-                    <Loader2 className="size-5 animate-spin text-slate-600 mx-auto" />
+                    <Loader2 className="size-5 animate-spin text-foreground mx-auto" />
                   </td>
                 </tr>
               ) : txns.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-slate-600 text-sm">
+                  <td colSpan={7} className="px-4 py-10 text-center text-foreground text-sm">
                     No transactions found.
                   </td>
                 </tr>
@@ -183,7 +183,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                         <>
                           <Link
                             to={paymentDetailPath(location.pathname, t.id)}
-                            className="font-medium text-white hover:text-amber-400 transition-colors"
+                            className="font-medium text-foreground hover:text-amber-400 transition-colors"
                           >
                             {t.attendees.firstName} {t.attendees.lastName}
                           </Link>
@@ -193,8 +193,8 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                         <span className="text-slate-600">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3 font-mono text-xs text-slate-400">{t.reference}</td>
-                    <td className="px-4 py-3 font-medium text-amber-400">
+                    <td className="px-4 py-3 font-mono text-xs text-foreground/85">{t.reference}</td>
+                    <td className="px-4 py-3 font-medium text-amber-500">
                       {t.currency === 'GBP' ? '£' : '₦'}
                       {t.amount}
                     </td>
@@ -211,7 +211,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                           href={t.receiptUrl ?? t.orders?.receiptUrl ?? '#'}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                          className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-400 transition-colors"
                         >
                           View <ExternalLink className="size-3" />
                         </a>
@@ -226,7 +226,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                       {busyId === t.id ? (
                         <Loader2 className="size-4 animate-spin text-slate-500" />
                       ) : (
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-4">
                           <Link
                             to={paymentDetailPath(location.pathname, t.id)}
                             title="View details"
@@ -237,7 +237,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                           <select
                             value={t.status}
                             onChange={e => void updateStatus(t.id, e.target.value)}
-                            className="text-xs bg-white/5 border border-white/10 text-slate-300 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                            className="text-xs bg-white/5 border border-foreground/10 text-slate-500 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
                           >
                             {PAYMENT_STATUSES.map(s => (
                               <option key={s} value={s} className="bg-slate-900">
