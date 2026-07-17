@@ -21,9 +21,6 @@ export function AuthLayout({ title, subtitle, children, footer }: AuthLayoutProp
         className={cn('w-full max-w-sm')}
       >
         <div className="text-center mb-8">
-          <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-4">
-            <ShieldCheck className="size-7 text-amber-400" />
-          </div>
           <h1 className="text-xl font-serif text-white">{title}</h1>
           {subtitle && <p className="text-slate-500 text-sm mt-1">{subtitle}</p>}
         </div>
