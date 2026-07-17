@@ -23,7 +23,7 @@ export default function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 w-full z-60 bg-foreground backdrop-blur-md">
+    <nav className="fixed top-0 w-full z-60 bg-slate-950/80 backdrop-blur-md">
       {/* ── Main bar ── */}
       <div className="max-w-7xl mx-auto px-6 h-[100px] flex items-center justify-between">
         <Link to="/" onClick={handleLogoClick} className="flex items-center gap-2">
