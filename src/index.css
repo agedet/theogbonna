@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+/* @import "@fontsource-variable/inter"; */
+/* We recommend adding a serif font like Playfair Display for the premium feel */
+/* @import "@fontsource/playfair-display";  */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -49,88 +52,74 @@
 }
 
 :root {
-    /* Main Background & Text */
-    --background: #FFFFFF; /* Ivory Mist */
-    --foreground: #050505; /* Black */
-    
-    /* Cards & Popovers */
-    --card: #FFFFFF; /* White */
-    --card-foreground: #050505; /* Black */
-    --popover: #FFFFFF; /* White */
-    --popover-foreground: #050505; /* Black */
-    
-    /* Primary Colors (Buttons, Highlights) */
-    --primary: #C6A606; /* Gold */
-    --primary-foreground: #FFFFFF; /* White text on Gold buttons */
-    
-    /* Secondary & Muted Elements */
-    --secondary: #FFEFD5; /* Papaya Whip */
-    --secondary-foreground: #050505; /* Black */
-    --muted: #FFEFD5; /* Papaya Whip */
-    --muted-foreground: #555555; /* A softer black/dark gray for muted text */
-    
-    /* Accents */
-    --accent: #40E0D0; /* Turquoise */
-    --accent-foreground: #050505; /* Black */
-    
+    /* Light Mode: Warm cream background with navy text and gold primary */
+    --background: oklch(0.985 0.01 80);
+    --foreground: oklch(0.20 0.03 260);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.20 0.03 260);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.20 0.03 260);
+    --primary: oklch(0.72 0.17 74); /* Premium Gold/Amber */
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.93 0.02 260);
+    --secondary-foreground: oklch(0.20 0.03 260);
+    --muted: oklch(0.93 0.02 260);
+    --muted-foreground: oklch(0.55 0.02 260);
+    --accent: oklch(0.93 0.02 260);
+    --accent-foreground: oklch(0.20 0.03 260);
     --destructive: oklch(0.577 0.245 27.325);
-    
-    /* Borders & Inputs */
-    /* Using a slightly darker shade of Ivory for elegant borders */
-    --border: #E8DCC4; 
-    --input: #E8DCC4; 
-    
-    --ring: #C6A606; /* Gold */
-    --chart-1: #C6A606; /* Gold */
-    --chart-2: #40E0D0; /* Turquoise */
-    --chart-3: #FFEFD5; /* Papaya Whip */
-    --chart-4: #050505; /* Black */
-    --chart-5: #FFFFFF; /* White */
+    --border: oklch(0.90 0.02 260);
+    --input: oklch(0.90 0.02 260);
+    --ring: oklch(0.72 0.17 74);
+    --chart-1: oklch(0.72 0.17 74);
+    --chart-2: oklch(0.20 0.03 260);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
     --radius: 0.75rem;
-    
-    --sidebar: #FFF9EB; /* Ivory Mist */
-    --sidebar-foreground: #050505; /* Black */
-    --sidebar-primary: #C6A606; /* Gold */
-    --sidebar-primary-foreground: #FFFFFF; /* White */
-    --sidebar-accent: #FFEFD5; /* Papaya Whip */
-    --sidebar-accent-foreground: #000000; /* Black */
-    --sidebar-border: #E8DCC4;
-    --sidebar-ring: #C6A606; /* Gold */
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.20 0.03 260);
+    --sidebar-primary: oklch(0.72 0.17 74);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.93 0.02 260);
+    --sidebar-accent-foreground: oklch(0.20 0.03 260);
+    --sidebar-border: oklch(0.90 0.02 260);
+    --sidebar-ring: oklch(0.72 0.17 74);
 }
 
 .dark {
-    /* Dark Mode variables (Optional: Adjusting to keep the Gold/Turquoise vibe on dark backgrounds) */
-    --background: #050505; /* Pure Black */
-    --foreground: #FFF9EB; /* Ivory Mist */
-    --card: #111111; 
-    --card-foreground: #FFF9EB; 
-    --popover: #111111;
-    --popover-foreground: #FFF9EB;
-    --primary: #C6A606; /* Gold */
-    --primary-foreground: #050505; /* Black */
-    --secondary: #222222;
-    --secondary-foreground: #FFF9EB;
-    --muted: #222222;
-    --muted-foreground: #FFEFD5; /* Papaya Whip for muted text in dark mode */
-    --accent: #40E0D0; /* Turquoise */
-    --accent-foreground: #050505;
+    /* Dark Mode: Deep navy/slate background with light text and gold primary */
+    --background: oklch(0.18 0.03 260); /* Deep Navy */
+    --foreground: oklch(0.96 0.01 80);
+    --card: oklch(0.22 0.03 260);
+    --card-foreground: oklch(0.96 0.01 80);
+    --popover: oklch(0.22 0.03 260);
+    --popover-foreground: oklch(0.96 0.01 80);
+    --primary: oklch(0.72 0.17 74); /* Premium Gold/Amber */
+    --primary-foreground: oklch(0.18 0.03 260);
+    --secondary: oklch(0.28 0.03 260);
+    --secondary-foreground: oklch(0.96 0.01 80);
+    --muted: oklch(0.28 0.03 260);
+    --muted-foreground: oklch(0.70 0.02 260);
+    --accent: oklch(0.28 0.03 260);
+    --accent-foreground: oklch(0.96 0.01 80);
     --destructive: oklch(0.704 0.191 22.216);
-    --border: #333333;
-    --input: #333333;
-    --ring: #C6A606; /* Gold */
-    --chart-1: #C6A606; /* Gold */
-    --chart-2: #40E0D0; /* Turquoise */
-    --chart-3: #FFEFD5; /* Papaya Whip */
-    --chart-4: #FFFFFF; /* White */
-    --chart-5: #222222;
-    --sidebar: #050505; /* Black */
-    --sidebar-foreground: #FFF9EB; /* Ivory Mist */
-    --sidebar-primary: #C6A606; /* Gold */
-    --sidebar-primary-foreground: #050505; /* Black */
-    --sidebar-accent: #222222;
-    --sidebar-accent-foreground: #FFF9EB; /* Ivory Mist */
-    --sidebar-border: #333333;
-    --sidebar-ring: #C6A606; /* Gold */
+    --border: oklch(1 0 0 / 12%);
+    --input: oklch(1 0 0 / 15%);
+    --ring: oklch(0.72 0.17 74);
+    --chart-1: oklch(0.72 0.17 74);
+    --chart-2: oklch(0.55 0.02 260);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.22 0.03 260);
+    --sidebar-foreground: oklch(0.96 0.01 80);
+    --sidebar-primary: oklch(0.72 0.17 74);
+    --sidebar-primary-foreground: oklch(0.18 0.03 260);
+    --sidebar-accent: oklch(0.28 0.03 260);
+    --sidebar-accent-foreground: oklch(0.96 0.01 80);
+    --sidebar-border: oklch(1 0 0 / 12%);
+    --sidebar-ring: oklch(0.72 0.17 74);
 }
 
 @layer base {
@@ -141,6 +130,7 @@
     @apply bg-background text-foreground;
     }
   html {
+    /* Setting smooth scrolling for the Apple-style reveal effects */
     @apply font-sans scroll-smooth; 
     }
 }

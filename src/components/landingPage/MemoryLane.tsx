@@ -51,7 +51,7 @@ export default function MemoryLane() {
   };
 
   return (
-    <section className="overflow-hidden bg-background px-3 py-16 sm:px-4 sm:py-24 md:px-6 md:py-32">
+    <section className="overflow-hidden bg-slate-950 px-3 py-16 sm:px-4 sm:py-24 md:px-6 md:py-32">
       <div className="mx-auto max-w-7xl">
         <h3 className="mb-10 text-center font-serif text-2xl text-amber-500 sm:mb-14 sm:text-3xl md:mb-20">
           Cherished Moments

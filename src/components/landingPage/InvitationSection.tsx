@@ -5,7 +5,7 @@ export default function InvitationSection() {
   return (
     <section
       id="invitation"
-      className="flex justify-center bg-background px-4 py-16 sm:px-6 sm:py-24 md:py-32"
+      className="flex justify-center bg-slate-950 px-4 py-16 sm:px-6 sm:py-24 md:py-32"
     >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
