@@ -115,7 +115,7 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
 
       <div className="flex flex-col sm:flex-row gap-2">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-muted-foreground" />
           <Input
             placeholder="Search name, email, phone, ref…"
             value={search}
@@ -123,7 +123,7 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-9 bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-9 text-sm"
+            className="pl-9 bg-background border-input text-foreground placeholder:text-muted-foreground h-9 text-sm"
           />
         </div>
         <div className="relative">
@@ -133,13 +133,13 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
               setFilter(e.target.value);
               setPage(1);
             }}
-            className="h-9 rounded-lg border border-white/10 bg-white/5 text-sm text-white px-3 pr-8 appearance-none focus:outline-none focus:ring-1 focus:ring-amber-500/50 cursor-pointer"
+            className="h-9 rounded-lg border border-border bg-background text-sm text-foreground px-3 pr-8 appearance-none focus:outline-none focus:ring-1 focus:ring-amber-500/50 cursor-pointer"
           >
-            <option value="" className="bg-slate-900">
+            <option value="">
               All Statuses
             </option>
             {ORDER_STATUSES.map(s => (
-              <option key={s} value={s} className="bg-slate-900">
+              <option key={s} value={s}>
                 {formatStatusLabel(s)}
               </option>
             ))}
@@ -150,56 +150,56 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
           type="button"
           onClick={() => void fetchOrders()}
           title="Refresh"
-          className="flex items-center justify-center size-9 rounded-lg border border-white/10 bg-white/5 text-slate-400 hover:text-white transition-colors shrink-0"
+          className="flex items-center justify-center size-9 rounded-lg border border-border bg-background text-muted-foreground hover:text-foreground transition-colors shrink-0"
         >
           <RefreshCw className={cn('size-3.5', loading && 'animate-spin')} />
         </button>
       </div>
 
-      <div className="rounded-xl border border-white/[0.08] overflow-hidden">
+      <div className="rounded-xl border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/[0.06] bg-white/[0.02]">
+              <tr className="border-b border-border bg-foreground">
                 {['Customer', 'Qty', 'Total', 'Date', 'Receipt', 'Status', 'Actions'].map(h => (
                   <th
                     key={h}
-                    className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                    className="px-4 py-3 text-left text-xs font-semibold text-background uppercase tracking-wider whitespace-nowrap"
                   >
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-border">
               {loading && orders.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-10 text-center">
-                    <Loader2 className="size-5 animate-spin text-slate-600 mx-auto" />
+                    <Loader2 className="size-5 animate-spin text-muted-foreground mx-auto" />
                   </td>
                 </tr>
               ) : orders.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-slate-600 text-sm">
+                  <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground text-sm">
                     No orders found.
                   </td>
                 </tr>
               ) : (
                 orders.map(o => (
-                  <tr key={o.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={o.id} className="hover:bg-muted/40 transition-colors">
                     <td className="px-4 py-3">
                       <Link
                         to={orderDetailPath(location.pathname, o.id)}
-                        className="font-medium text-white hover:text-amber-400 transition-colors"
+                        className="font-medium text-foreground hover:text-amber-600 transition-colors"
                       >
                         {o.fullName}
                       </Link>
-                      <p className="text-xs text-slate-500 mt-0.5">{o.email}</p>
-                      <p className="text-xs text-slate-600">{o.phone}</p>
+                      <p className="text-xs text-foreground mt-0.5">{o.email}</p>
+                      <p className="text-xs text-foreground">{o.phone}</p>
                     </td>
-                    <td className="px-4 py-3 text-slate-300">{o.quantity}</td>
-                    <td className="px-4 py-3 font-medium text-amber-400">£{o.totalPrice}</td>
-                    <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
+                    <td className="px-4 py-3 text-foreground">{o.quantity}</td>
+                    <td className="px-4 py-3 font-medium text-amber-900">£{o.totalPrice}</td>
+                    <td className="px-4 py-3 text-foreground text-xs whitespace-nowrap">
                       {new Date(o.createdAt).toLocaleDateString('en-GB', {
                         day: '2-digit',
                         month: 'short',
@@ -212,12 +212,12 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                           href={o.receiptUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex items-center gap-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                          className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 transition-colors"
                         >
                           View <ExternalLink className="size-3" />
                         </a>
                       ) : (
-                        <span className="text-slate-600 text-xs">—</span>
+                        <span className="text-foreground text-xs">—</span>
                       )}
                     </td>
                     <td className="px-4 py-3">
@@ -225,23 +225,23 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                     </td>
                     <td className="px-4 py-3">
                       {busyId === o.id ? (
-                        <Loader2 className="size-4 animate-spin text-slate-500" />
+                        <Loader2 className="size-4 animate-spin text-foreground" />
                       ) : (
                         <div className="flex items-center gap-2">
                           <Link
                             to={orderDetailPath(location.pathname, o.id)}
                             title="View details"
-                            className="flex size-8 items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                            className="flex size-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
                           >
                             <Eye className="size-3.5" />
                           </Link>
                           <select
                             value={o.status}
                             onChange={e => void updateStatus(o.id, e.target.value)}
-                            className="text-xs bg-white/5 border border-white/10 text-slate-300 rounded-lg px-2 py-1 max-w-[140px] cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                            className="text-xs bg-background border border-border text-foreground rounded-lg px-2 py-1 max-w-[140px] cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
                           >
                             {ORDER_STATUSES.map(s => (
-                              <option key={s} value={s} className="bg-slate-900">
+                              <option key={s} value={s}>
                                 {formatStatusLabel(s)}
                               </option>
                             ))}

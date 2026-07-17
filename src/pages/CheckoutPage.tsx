@@ -127,13 +127,13 @@ function NgnEquivalent({ gbpTotal, rate, loading, error, onRetry }: {
   const [now] = useState<number>(() => Date.now());
 
   if (loading) return (
-    <div className="flex items-center gap-1.5 text-xs text-slate-500">
+    <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
       <Loader2 className="size-3 animate-spin" /> Fetching live NGN rate…
     </div>
   );
   if (error || !rate) return (
     <button type="button" onClick={onRetry}
-      className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-400">
+      className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground">
       <RefreshCw className="size-3" /> Could not load NGN rate — tap to retry
     </button>
   );
@@ -141,11 +141,11 @@ function NgnEquivalent({ gbpTotal, rate, loading, error, onRetry }: {
   const ageMin   = Math.round((now - new Date(rate.cachedAt).getTime()) / 60_000);
   const ageLabel = ageMin < 1 ? 'just now' : `${ageMin}m ago`;  return (
     <div className="flex items-baseline gap-1.5 flex-wrap">
-      <span className="text-sm font-semibold text-emerald-400">{formatNgn(ngn)}</span>
-      <span className="text-xs text-slate-500">
+      <span className="text-sm font-semibold text-emerald-600">{formatNgn(ngn)}</span>
+      <span className="text-xs text-muted-foreground">
         at ₦{Math.round(rate.rate).toLocaleString('en-NG')}/£ · updated {ageLabel}
       </span>
-      <button type="button" onClick={onRetry} className="text-slate-600 hover:text-slate-400"
+      <button type="button" onClick={onRetry} className="text-muted-foreground hover:text-foreground"
         title="Refresh rate" aria-label="Refresh exchange rate">
         <RefreshCw className="size-3" />
       </button>
@@ -168,20 +168,20 @@ function StepIndicator({ current }: { current: number }) {
               <div className={cn(
                 'flex size-7 shrink-0 items-center justify-center rounded-full border-2 text-xs font-semibold transition-all duration-300 sm:size-8 sm:text-sm',
                 done   && 'border-amber-500 bg-amber-500 text-white',
-                active && 'border-amber-500 bg-transparent text-amber-500',
-                !done && !active && 'border-slate-700 bg-transparent text-slate-600',
+                active && 'border-amber-500 bg-transparent text-amber-600',
+                !done && !active && 'border-border bg-transparent text-muted-foreground',
               )}>
                 {done ? <Check className="size-3.5 sm:size-4" /> : i + 1}
               </div>
               <span className={cn(
                 'max-w-[4.5rem] text-center text-[0.6rem] leading-tight font-medium sm:max-w-none sm:whitespace-nowrap sm:text-xs',
-                active ? 'text-amber-400' : done ? 'text-amber-500/70' : 'text-slate-600',
+                active ? 'text-amber-600' : done ? 'text-amber-600/70' : 'text-muted-foreground',
               )}>{label}</span>
             </div>
             {!last && (
               <div className={cn(
                 'mx-0.5 mb-4 hidden h-px w-6 shrink-0 transition-colors duration-300 sm:mx-1 sm:mb-5 sm:block sm:w-10 md:w-14',
-                done ? 'bg-amber-500' : 'bg-slate-700',
+                done ? 'bg-amber-500' : 'bg-border',
               )} />
             )}
           </div>
@@ -197,8 +197,8 @@ function Field({ label, error, required, children, htmlFor }: {
 }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <Label htmlFor={htmlFor} className="text-slate-300">
-        {label}{required && <span className="text-amber-500 ml-0.5">*</span>}
+      <Label htmlFor={htmlFor} className="text-foreground">
+        {label}{required && <span className="text-amber-600 ml-0.5">*</span>}
       </Label>
       {children}
       {error && (
@@ -212,13 +212,13 @@ function Field({ label, error, required, children, htmlFor }: {
 
 function QuantityStepper({ value, onChange }: { value: number; onChange: (n: number) => void }) {
   return (
-    <div className="flex items-center rounded-md border border-white/10 w-fit overflow-hidden">
+    <div className="flex items-center rounded-md border border-border w-fit overflow-hidden">
       <button type="button" onClick={() => onChange(Math.max(1, value - 1))} disabled={value <= 1}
-        className="flex size-9 items-center justify-center bg-white/5 text-slate-300 hover:bg-white/10 disabled:opacity-40 transition-colors"
+        className="flex size-9 items-center justify-center bg-muted text-foreground hover:bg-muted/80 disabled:opacity-40 transition-colors"
         aria-label="Decrease quantity">−</button>
-      <span className="min-w-[2.5rem] text-center text-sm font-semibold text-white px-3 py-2 bg-white/[0.03]">{value}</span>
+      <span className="min-w-[2.5rem] text-center text-sm font-semibold text-foreground px-3 py-2 bg-background">{value}</span>
       <button type="button" onClick={() => onChange(Math.min(10, value + 1))} disabled={value >= 10}
-        className="flex size-9 items-center justify-center bg-white/5 text-slate-300 hover:bg-white/10 disabled:opacity-40 transition-colors"
+        className="flex size-9 items-center justify-center bg-muted text-foreground hover:bg-muted/80 disabled:opacity-40 transition-colors"
         aria-label="Increase quantity">+</button>
     </div>
   );
@@ -233,7 +233,7 @@ function CopyButton({ text }: { text: string }) {
   }
   return (
     <button type="button" onClick={handleCopy}
-      className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
+      className="flex items-center gap-1 text-xs text-amber-600 hover:text-amber-700 transition-colors"
       aria-label={`Copy ${text}`}>
       {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
       {copied ? 'Copied' : 'Copy'}
@@ -266,33 +266,33 @@ function StepDetails({ data, onChange, onNext }: {
         <Field label="First Name" required error={errors.firstName} htmlFor={`${id}-fname`}>
           <Input id={`${id}-fname`} placeholder="e.g. Clinton"
             value={data.firstName} onChange={e => onChange({ firstName: e.target.value })}
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
+            className="bg-background border-border text-foreground placeholder:text-muted-foreground h-11"
             aria-invalid={!!errors.firstName} />
         </Field>
         <Field label="Last Name" required error={errors.lastName} htmlFor={`${id}-lname`}>
           <Input id={`${id}-lname`} placeholder="e.g. Shepherd"
             value={data.lastName} onChange={e => onChange({ lastName: e.target.value })}
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
+            className="bg-background border-border text-foreground placeholder:text-muted-foreground h-11"
             aria-invalid={!!errors.lastName} />
         </Field>
       </div>
       <Field label="Email Address" required error={errors.email} htmlFor={`${id}-email`}>
         <Input id={`${id}-email`} type="email" placeholder="you@example.com"
           value={data.email} onChange={e => onChange({ email: e.target.value })}
-          className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
+          className="bg-background border-border text-foreground placeholder:text-muted-foreground h-11"
           aria-invalid={!!errors.email} />
       </Field>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         <Field label="Phone Number" required error={errors.phone} htmlFor={`${id}-phone`}>
           <Input id={`${id}-phone`} type="tel" placeholder="+234 800 000 0000"
             value={data.phone} onChange={e => onChange({ phone: e.target.value })}
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
+            className="bg-background border-border text-foreground placeholder:text-muted-foreground h-11"
             aria-invalid={!!errors.phone} />
         </Field>
         <Field label="WhatsApp Number" htmlFor={`${id}-wa`}>
           <Input id={`${id}-wa`} type="tel" placeholder="Same as phone? Leave blank"
             value={data.whatsapp} onChange={e => onChange({ whatsapp: e.target.value })}
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11" />
+            className="bg-background border-border text-foreground placeholder:text-muted-foreground h-11" />
         </Field>
       </div>
       <Button type="button" onClick={() => { if (validate()) onNext(); }}
@@ -325,20 +325,20 @@ function StepReview({ data, onChange, onBack, onNext }: {
   return (
     <div className="space-y-6">
       <div>
-        <p className="text-sm font-medium text-slate-300 mb-3">How many sets?</p>
-        <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm font-medium text-foreground mb-3">How many sets?</p>
+        <div className="flex flex-col gap-3 rounded-xl border border-border bg-card px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="font-medium text-white text-sm sm:text-base">5 Yards Beaded Lace &amp; Gele</p>
-            <p className="mt-0.5 text-sm text-slate-500">£{UNIT_PRICE} per set</p>
+            <p className="font-medium text-foreground text-sm sm:text-base">5 Yards Beaded Lace &amp; Gele</p>
+            <p className="mt-0.5 text-sm text-muted-foreground">£{UNIT_PRICE} per set</p>
           </div>
           <QuantityStepper value={data.quantity} onChange={q => onChange({ quantity: q })} />
         </div>
       </div>
       <div>
-        <p className="text-sm font-medium text-slate-300 mb-3">Delivery option</p>
+        <p className="text-sm font-medium text-foreground mb-3">Delivery option</p>
         <Select value={data.deliveryOption}
           onValueChange={v => onChange({ deliveryOption: v as DeliveryValue, deliveryAddress: '', deliveryState: '' })}>
-          <SelectTrigger className="w-full bg-white/5 border-white/10 text-white h-11">
+          <SelectTrigger className="w-full bg-background border-border text-foreground h-11">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -358,35 +358,35 @@ function StepReview({ data, onChange, onBack, onNext }: {
             <Field label="Delivery Address" required error={errors.deliveryAddress} htmlFor={`${id}-addr`}>
               <Input id={`${id}-addr`} placeholder="Street address, landmark…"
                 value={data.deliveryAddress} onChange={e => onChange({ deliveryAddress: e.target.value })}
-                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-11"
                 aria-invalid={!!errors.deliveryAddress} />
             </Field>
             <Field label="State" required error={errors.deliveryState} htmlFor={`${id}-state`}>
               <Input id={`${id}-state`} placeholder="e.g. Lagos State"
                 value={data.deliveryState} onChange={e => onChange({ deliveryState: e.target.value })}
-                className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11"
+                className="bg-background border-border text-foreground placeholder:text-muted-foreground h-11"
                 aria-invalid={!!errors.deliveryState} />
             </Field>
           </motion.div>
         )}
       </AnimatePresence>
-      <div className="rounded-xl border border-white/10 bg-white/[0.03] divide-y divide-white/[0.06]">
+      <div className="rounded-xl border border-border bg-card divide-y divide-border">
         <div className="flex justify-between px-4 py-3 text-sm">
-          <span className="text-slate-400">Materials ({data.quantity} × £{UNIT_PRICE})</span>
-          <span className="text-white font-medium">£{data.quantity * UNIT_PRICE}</span>
+          <span className="text-muted-foreground">Materials ({data.quantity} × £{UNIT_PRICE})</span>
+          <span className="text-foreground font-medium">£{data.quantity * UNIT_PRICE}</span>
         </div>
         <div className="flex justify-between px-4 py-3 text-sm">
-          <span className="text-slate-400">Delivery ({getDeliveryLabel(data.deliveryOption)})</span>
-          <span className="text-white font-medium">{deliveryFee > 0 ? `£${deliveryFee}` : 'Free'}</span>
+          <span className="text-muted-foreground">Delivery ({getDeliveryLabel(data.deliveryOption)})</span>
+          <span className="text-foreground font-medium">{deliveryFee > 0 ? `£${deliveryFee}` : 'Free'}</span>
         </div>
         <div className="flex justify-between px-4 py-3">
-          <span className="text-white font-semibold">Total</span>
-          <span className="text-amber-400 font-bold text-lg">£{total}</span>
+          <span className="text-foreground font-semibold">Total</span>
+          <span className="text-amber-600 font-bold text-lg">£{total}</span>
         </div>
       </div>
       <div className="flex flex-col-reverse gap-3 sm:flex-row">
         <Button type="button" variant="outline" onClick={onBack}
-          className="h-12 flex-1 rounded-xl border-white/10 text-slate-900 hover:bg-white/10 hover:text-white">
+          className="h-12 flex-1 rounded-xl border-border text-foreground hover:bg-muted">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={() => { if (validate()) onNext(); }}
@@ -416,14 +416,14 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
       <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 px-4 py-4 sm:px-5">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0">
-            <p className="text-sm text-slate-400">Amount due</p>
-            <p className="mt-0.5 text-2xl font-bold text-amber-400 sm:text-3xl">£{total}</p>
+            <p className="text-sm text-muted-foreground">Amount due</p>
+            <p className="mt-0.5 text-2xl font-bold text-amber-600 sm:text-3xl">£{total}</p>
             <div className="mt-1.5">
               <NgnEquivalent gbpTotal={total} rate={exchangeRate}
                 loading={rateLoading} error={rateError} onRetry={onRateRetry} />
             </div>
           </div>
-          <div className="shrink-0 text-left text-xs text-slate-500 sm:pt-1 sm:text-right">
+          <div className="shrink-0 text-left text-xs text-muted-foreground sm:pt-1 sm:text-right">
             <p>{data.quantity} set(s)</p>
             <p>{getDeliveryLabel(data.deliveryOption)}</p>
           </div>
@@ -432,9 +432,9 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
 
       {/* Bank details */}
       <div className="space-y-3">
-        <p className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Bank Transfer Details</p>
-        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 space-y-2.5">
-          <p className="text-xs font-semibold text-amber-500/80 uppercase tracking-wider mb-3">🇳🇬 Nigeria Account</p>
+        <p className="text-sm font-semibold text-foreground uppercase tracking-wider">Bank Transfer Details</p>
+        <div className="rounded-xl border border-border bg-card p-4 space-y-2.5">
+          <p className="text-xs font-semibold text-amber-600/80 uppercase tracking-wider mb-3">🇳🇬 Nigeria Account</p>
           {([
             { label: 'Account Name', value: BANK_DETAILS.ng.name        },
             { label: 'Description',  value: BANK_DETAILS.ng.description },
@@ -442,9 +442,9 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
             { label: 'Bank',         value: BANK_DETAILS.ng.bank        },
           ] as { label: string; value: string }[]).map(row => (
             <div key={row.label} className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-              <span className="shrink-0 text-xs text-slate-500">{row.label}</span>
+              <span className="shrink-0 text-xs text-muted-foreground">{row.label}</span>
               <div className="flex min-w-0 items-center gap-2">
-                <span className="truncate text-sm font-mono text-white">{row.value}</span>
+                <span className="truncate text-sm font-mono text-foreground">{row.value}</span>
                 <CopyButton text={row.value} />
               </div>
             </div>
@@ -466,7 +466,7 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
             className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11" 
           />
         </Field> */}
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-muted-foreground">
           You can submit now and upload your receipt in the next step.
         </p>
       </div>
@@ -483,7 +483,7 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
           variant="outline" 
           onClick={onBack} 
           disabled={submitting}
-          className="h-12 flex-1 rounded-xl border-white/10 text-slate-900 hover:bg-white/10 hover:text-white">
+          className="h-12 flex-1 rounded-xl border-border text-foreground hover:bg-muted">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={onSubmit} disabled={submitting}
@@ -493,7 +493,7 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
             : <>I Have Paid &amp; Continue <ChevronRight className="ml-1 size-4" /></>}
         </Button>
       </div>
-      <p className="text-center text-xs text-slate-600 leading-relaxed">
+      <p className="text-center text-xs text-muted-foreground leading-relaxed">
         By continuing you agree to our payment terms.
       </p>
     </div>
@@ -585,9 +585,9 @@ function StepUpload({ form, order, onBack, onDone }: {
   return (
     <div className="space-y-6">
       {/* Order recap */}
-      <div className="rounded-xl border border-white/10 bg-white/[0.03] divide-y divide-white/[0.06]">
+      <div className="rounded-xl border border-border bg-card divide-y divide-border">
         <div className="px-4 py-3">
-          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Order Summary</p>
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Order Summary</p>
         </div>
         {[
           { label: 'Order ID',    value: order.id },
@@ -597,16 +597,16 @@ function StepUpload({ form, order, onBack, onDone }: {
           { label: 'Delivery',    value: getDeliveryLabel(form.deliveryOption) },
         ].map(row => (
           <div key={row.label} className="flex flex-col gap-0.5 px-4 py-2.5 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-            <span className="shrink-0 text-slate-500">{row.label}</span>
-            <span className="break-all font-mono font-medium text-white sm:text-right">{row.value}</span>
+            <span className="shrink-0 text-muted-foreground">{row.label}</span>
+            <span className="break-all font-mono font-medium text-foreground sm:text-right">{row.value}</span>
           </div>
         ))}
       </div>
 
       {/* Drop zone */}
       <div>
-        <p className="text-sm font-medium text-slate-300 mb-3">
-          Upload proof of payment <span className="text-amber-500">*</span>
+        <p className="text-sm font-medium text-foreground mb-3">
+          Upload proof of payment <span className="text-amber-600">*</span>
         </p>
         <div
           onClick={() => fileInputRef.current?.click()}
@@ -617,7 +617,7 @@ function StepUpload({ form, order, onBack, onDone }: {
             'relative flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed px-4 py-8 cursor-pointer transition-all duration-200 sm:px-6 sm:py-10',
             dragOver ? 'border-amber-500 bg-amber-500/10'
               : file  ? 'border-emerald-500/50 bg-emerald-500/5'
-              : 'border-white/10 bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]',
+              : 'border-border bg-muted/30 hover:border-border/80 hover:bg-muted/50',
           )}
           role="button"
           tabIndex={0}
@@ -626,10 +626,10 @@ function StepUpload({ form, order, onBack, onDone }: {
         >
           {!file ? (
             <>
-              <UploadCloud className={cn('size-10', dragOver ? 'text-amber-400' : 'text-slate-600')} />
+              <UploadCloud className={cn('size-10', dragOver ? 'text-amber-500' : 'text-muted-foreground')} />
               <div className="text-center">
-                <p className="text-sm text-slate-300">Drop your receipt here or <span className="text-amber-400 underline">browse</span></p>
-                <p className="text-xs text-slate-600 mt-1">JPG, PNG, WebP, or PDF · max 10 MB</p>
+                <p className="text-sm text-foreground">Drop your receipt here or <span className="text-amber-600 underline">browse</span></p>
+                <p className="text-xs text-muted-foreground mt-1">JPG, PNG, WebP, or PDF · max 10 MB</p>
               </div>
             </>
           ) : (
@@ -638,13 +638,13 @@ function StepUpload({ form, order, onBack, onDone }: {
                 ? <img src={preview} alt="Receipt preview"
                     className="max-h-32 w-full max-w-xs rounded-xl object-contain sm:max-h-40" />
                 : <div className="flex items-center gap-2">
-                    <FileText className="size-8 text-slate-400" />
-                    <p className="text-sm text-slate-300">{file.name}</p>
+                    <FileText className="size-8 text-muted-foreground" />
+                    <p className="text-sm text-foreground">{file.name}</p>
                   </div>
               }
               <button type="button" aria-label="Remove file"
                 onClick={e => { e.stopPropagation(); setFile(null); setPreview(null); }}
-                className="absolute top-3 right-3 flex size-7 items-center justify-center rounded-full bg-slate-800 border border-white/10 text-slate-400 hover:text-white transition-colors">
+                className="absolute top-3 right-3 flex size-7 items-center justify-center rounded-full bg-muted border border-border text-muted-foreground hover:text-foreground transition-colors">
                 <X className="size-3.5" />
               </button>
               <p className="text-xs text-emerald-400">{file.name} · {(file.size / 1024).toFixed(0)} KB</p>
@@ -658,10 +658,10 @@ function StepUpload({ form, order, onBack, onDone }: {
       {/* Upload progress bar */}
       {uploading && (
         <div className="space-y-1.5">
-          <div className="flex justify-between text-xs text-slate-500">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>Uploading…</span><span>{progress}%</span>
           </div>
-          <div className="h-1.5 w-full rounded-full bg-white/10 overflow-hidden">
+          <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
             <motion.div className="h-full bg-amber-500 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
@@ -678,7 +678,7 @@ function StepUpload({ form, order, onBack, onDone }: {
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row">
         <Button type="button" variant="outline" onClick={onBack} disabled={uploading}
-          className="h-12 flex-1 rounded-xl border-white/10 text-slate-900 hover:bg-white/10 hover:text-white">
+          className="h-12 flex-1 rounded-xl border-border text-foreground hover:bg-muted">
           <ChevronLeft className="mr-1 size-4" /> Back
         </Button>
         <Button type="button" onClick={handleUpload} disabled={uploading || !file}
@@ -775,8 +775,8 @@ export default function CheckoutPage() {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-950 text-slate-200">
-      <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex h-[72px] max-w-xl items-center justify-between px-4 sm:h-[100px] sm:px-6">
           <Link to="/" className="shrink-0">
             <img
@@ -785,7 +785,7 @@ export default function CheckoutPage() {
               className="h-12 w-auto object-contain sm:h-16"
             />
           </Link>
-          <span className="text-[0.65rem] font-mono tracking-wider text-slate-500 uppercase sm:text-xs">
+          <span className="text-[0.65rem] font-mono tracking-wider text-muted-foreground uppercase sm:text-xs">
             Secure Checkout
           </span>
         </div>
@@ -794,8 +794,8 @@ export default function CheckoutPage() {
       <main className="flex flex-1 flex-col items-center justify-start px-3 py-8 sm:px-4 sm:py-12">
         <div className="w-full max-w-xl">
           <div className="mb-6 text-center sm:mb-8">
-            <h1 className="font-serif text-xl text-white sm:text-2xl">Asoebi Order</h1>
-            <p className="mt-1 text-xs text-slate-500 sm:text-sm">
+            <h1 className="font-serif text-xl text-foreground sm:text-2xl">Asoebi Order</h1>
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
               5 Yards Beaded Lace &amp; Gele — £100 per set
             </p>
           </div>

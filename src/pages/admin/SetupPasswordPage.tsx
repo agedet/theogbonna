@@ -25,7 +25,7 @@ function PasswordField({ id, label, value, onChange, placeholder, disabled }: Pa
   const [show, setShow] = useState(false);
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-slate-300">{label}</Label>
+      <Label htmlFor={id} className="text-foreground">{label}</Label>
       <div className="relative">
         <Input
           id={id}
@@ -36,13 +36,13 @@ function PasswordField({ id, label, value, onChange, placeholder, disabled }: Pa
           value={value}
           onChange={e => onChange(e.target.value)}
           disabled={disabled}
-          className="bg-white/5 border-white/10 text-white placeholder:text-slate-600 h-11 pr-10"
+          className="bg-background border-input text-foreground placeholder:text-muted-foreground h-11 pr-10"
         />
         <button
           type="button"
           tabIndex={-1}
           onClick={() => setShow(s => !s)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
           aria-label={show ? 'Hide password' : 'Show password'}
         >
           {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
@@ -71,12 +71,12 @@ function PasswordStrength({ password }: { password: string }) {
     <div className="space-y-2 mt-2">
       <div className="flex gap-1">
         {checks.map((_, i) => (
-          <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-200 ${i < score ? colors[score - 1] : 'bg-white/10'}`} />
+          <div key={i} className={`h-1 flex-1 rounded-full transition-colors duration-200 ${i < score ? colors[score - 1] : 'bg-border'}`} />
         ))}
       </div>
       <div className="grid grid-cols-2 gap-x-4 gap-y-1">
         {checks.map(c => (
-          <p key={c.label} className={`flex items-center gap-1 text-xs transition-colors ${c.ok ? 'text-emerald-400' : 'text-slate-600'}`}>
+          <p key={c.label} className={`flex items-center gap-1 text-xs transition-colors ${c.ok ? 'text-emerald-600' : 'text-muted-foreground'}`}>
             <span>{c.ok ? '✓' : '○'}</span> {c.label}
           </p>
         ))}
@@ -138,8 +138,8 @@ export default function SetupPasswordPage() {
   // ── Loading ──────────────────────────────────────────────────────────────────
   if (verifying) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-        <Loader2 className="size-6 animate-spin text-amber-500" />
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="size-6 animate-spin text-amber-600" />
       </div>
     );
   }
@@ -147,17 +147,17 @@ export default function SetupPasswordPage() {
   // ── Invalid / expired token ───────────────────────────────────────────────────
   if (tokenError) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
           className="w-full max-w-sm text-center space-y-4">
           <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-red-500/10 border border-red-500/20 mx-auto">
-            <AlertCircle className="size-7 text-red-400" />
+            <AlertCircle className="size-7 text-red-500" />
           </div>
-          <h1 className="text-xl font-semibold text-white">Invalid Invitation</h1>
-          <p className="text-slate-400 text-sm">{tokenError}</p>
-          <p className="text-slate-500 text-xs">
+          <h1 className="text-xl font-semibold text-foreground">Invalid Invitation</h1>
+          <p className="text-muted-foreground text-sm">{tokenError}</p>
+          <p className="text-muted-foreground text-xs">
             Ask your super-admin to send a new invitation, or{' '}
-            <Link to="/admin/login" className="text-amber-400 hover:text-amber-300 transition-colors">
+            <Link to="/admin/login" className="text-amber-600 hover:text-amber-700 transition-colors">
               sign in
             </Link>{' '}
             if you already have an account.
@@ -170,20 +170,20 @@ export default function SetupPasswordPage() {
   // ── Success ───────────────────────────────────────────────────────────────────
   if (done) {
     return (
-      <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
           className="w-full max-w-sm text-center space-y-4">
           <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 18, delay: 0.1 }}
             className="inline-flex size-16 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 mx-auto">
-            <CheckCircle2 className="size-8 text-emerald-400" />
+            <CheckCircle2 className="size-8 text-emerald-600" />
           </motion.div>
-          <h1 className="text-xl font-semibold text-white">Password set!</h1>
-          <p className="text-slate-400 text-sm">
+          <h1 className="text-xl font-semibold text-foreground">Password set!</h1>
+          <p className="text-muted-foreground text-sm">
             Your account is ready. Redirecting to the login page…
           </p>
           <Link to="/admin/login"
-            className="inline-block text-xs text-amber-400 hover:text-amber-300 transition-colors">
+            className="inline-block text-xs text-amber-600 hover:text-amber-700 transition-colors">
             Go to login →
           </Link>
         </motion.div>
@@ -195,7 +195,7 @@ export default function SetupPasswordPage() {
 
   // ── Form ──────────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
         className="w-full max-w-sm"
@@ -203,18 +203,18 @@ export default function SetupPasswordPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <div className="inline-flex size-14 items-center justify-center rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-4">
-            <ShieldCheck className="size-7 text-amber-400" />
+            <ShieldCheck className="size-7 text-amber-600" />
           </div>
-          <h1 className="text-xl font-serif text-white">Set Up Your Account</h1>
-          <p className="text-slate-500 text-sm mt-1">
+          <h1 className="text-xl font-serif text-foreground">Set Up Your Account</h1>
+          <p className="text-muted-foreground text-sm mt-1">
             Welcome{firstName ? `, ${firstName}` : ''}! Create your password to continue.
           </p>
           {email && (
-            <p className="text-xs text-slate-600 mt-1">{email}</p>
+            <p className="text-xs text-muted-foreground mt-1">{email}</p>
           )}
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+        <div className="rounded-2xl border border-border bg-card p-6">
           <form onSubmit={handleSubmit} className="space-y-4">
             <PasswordField
               id="password"
@@ -253,9 +253,9 @@ export default function SetupPasswordPage() {
           </form>
         </div>
 
-        <p className="text-center text-xs text-slate-600 mt-4">
+        <p className="text-center text-xs text-muted-foreground mt-4">
           Already have an account?{' '}
-          <Link to="/admin/login" className="text-amber-400 hover:text-amber-300 transition-colors">
+          <Link to="/admin/login" className="text-amber-600 hover:text-amber-700 transition-colors">
             Sign in
           </Link>
         </p>

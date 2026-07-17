@@ -8,8 +8,8 @@ export default function OrdersPage() {
   return (
     <div className="p-6 space-y-4">
       <div>
-        <h1 className="text-xl font-semibold text-white">Orders</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
+        <h1 className="text-xl font-semibold text-foreground">Orders</h1>
+        <p className="text-sm text-muted-foreground mt-0.5">
           {canDelete
             ? 'Update order status or delete orders.'
             : 'Update order status.'}
