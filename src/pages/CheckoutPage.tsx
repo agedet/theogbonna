@@ -1,3 +1,4 @@
+import { Helmet } from 'react-helmet-async';
 import { useState, useId, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -776,6 +777,11 @@ export default function CheckoutPage() {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 text-slate-200">
+      <Helmet>
+        <title>Checkout - Order Your Asoebi | Ogbonnas Memorial</title>
+        <meta name="description" content="Order your 5 Yards Beaded Lace & Gele asoebi for the Ogbonna Memorial celebration. Secure checkout with delivery across Nigeria. £100 per set." />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
         <div className="mx-auto flex h-[72px] max-w-xl items-center justify-between px-4 sm:h-[100px] sm:px-6">
           <Link to="/" className="shrink-0">
