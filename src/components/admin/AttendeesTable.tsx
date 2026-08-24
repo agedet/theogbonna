@@ -265,9 +265,9 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
 
   async function softDeleteAttendee(id: string, email: string) {
     const ok = await confirm({
-      title: 'Archive attendee?',
-      description: `Archive ${email}? The record will be hidden from normal views but can be restored by a super admin.`,
-      confirmLabel: 'Archive',
+      title: 'Delete attendee?',
+      description: `Delete ${email}? The record will be deleted.`,
+      confirmLabel: 'Delete',
     });
     if (!ok) return;
 
@@ -277,7 +277,7 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
       await api.patch(`/admin/attendees/${id}/soft-delete`, {});
       await fetchAttendees();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to archive attendee');
+      setError(err instanceof Error ? err.message : 'Failed to delete attendee');
     } finally {
       setBusyId(null);
     }

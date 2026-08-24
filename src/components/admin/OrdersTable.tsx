@@ -87,9 +87,9 @@ export function OrdersTable({ onChanged, canSoftDelete = false, canDelete = fals
 
   async function softDeleteOrder(orderId: string) {
     const ok = await confirm({
-      title: 'Archive order?',
-      description: 'Archive this order? It will be hidden from normal views but can be restored by a super admin.',
-      confirmLabel: 'Archive',
+      title: 'Delete order?',
+      description: 'Delete this order? It will be deleted.',
+      confirmLabel: 'Delete',
     });
     if (!ok) return;
 

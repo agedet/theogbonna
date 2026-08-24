@@ -81,9 +81,9 @@ export function PaymentsTable({ onChanged, canSoftDelete = false, canDelete = fa
 
   async function softDeletePayment(paymentId: string) {
     const ok = await confirm({
-      title: 'Archive payment?',
-      description: 'Archive this payment? It will be hidden from normal views but can be restored by a super admin.',
-      confirmLabel: 'Archive',
+      title: 'Delete payment?',
+      description: 'Delete this payment? It will be deleted',
+      confirmLabel: 'Delete',
     });
     if (!ok) return;
 
@@ -94,7 +94,7 @@ export function PaymentsTable({ onChanged, canSoftDelete = false, canDelete = fa
       await fetchTxns();
       onChanged?.();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to archive payment');
+      setError(err instanceof Error ? err.message : 'Failed to delete payment');
     } finally {
       setBusyId(null);
     }
