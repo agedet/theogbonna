@@ -102,10 +102,6 @@ function AttendeeDetailSheet({
               <Section icon={User} title="Personal Details">
                 <DetailRow label="Full Name"  value={`${a.firstName} ${a.lastName}`} />
                 <DetailRow label="Email"      value={a.email} />
-                <DetailRow label="Date of Birth" value={a.dob
-                  ? new Date(a.dob).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
-                  : null}
-                />
                 <DetailRow label="Joined" value={
                   new Date(a.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
                 } />
