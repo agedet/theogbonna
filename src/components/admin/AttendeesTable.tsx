@@ -1,11 +1,206 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Search, RefreshCw, Loader2, Trash2 } from 'lucide-react';
+import {
+  Search, RefreshCw, Loader2, Trash2,
+  ExternalLink, X, User, MapPin, ShoppingBag, CreditCard,
+  Archive,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import {
+  Sheet, SheetContent, SheetHeader, SheetTitle,
+} from '@/components/ui/sheet';
 import { useConfirmDialog } from '@/components/ui/use-confirm-dialog';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { StatusBadge } from './StatusBadge';
 import { TablePagination } from './TablePagination';
-import { PAGE_SIZE, type Attendee, type Paginated } from './types';
+import { PAGE_SIZE, type Attendee, type Order, type Paginated, type Transaction } from './types';
+
+// ─── Detail sheet ──────────────────────────────────────────────────────────────
+
+interface AttendeeDetail {
+  attendee: Attendee;
+  orders:   Order[];
+  payments: Transaction[];
+}
+
+function DetailRow({ label, value }: { label: string; value?: string | number | null }) {
+  return (
+    <div className="flex flex-col gap-0.5 py-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <span className="text-xs text-muted-foreground shrink-0">{label}</span>
+      <span className="text-sm font-medium text-foreground break-all sm:text-right">
+        {value ?? '—'}
+      </span>
+    </div>
+  );
+}
+
+function Section({ icon: Icon, title, children }: {
+  icon: React.ElementType; title: string; children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center gap-2 pb-1 border-b border-border">
+        <Icon className="size-3.5 text-amber-500" />
+        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {title}
+        </h3>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function AttendeeDetailSheet({
+  open, onClose, detail, loading, error,
+}: {
+  open: boolean;
+  onClose: () => void;
+  detail: AttendeeDetail | null;
+  loading: boolean;
+  error: string | null;
+}) {
+  const a = detail?.attendee;
+
+  return (
+    <Sheet open={open} onOpenChange={v => { if (!v) onClose(); }}>
+      <SheetContent
+        side="right"
+        className="w-full sm:max-w-lg overflow-y-auto bg-background border-l border-border p-0"
+        showCloseButton={false}
+      >
+        {/* Header */}
+        <SheetHeader className="sticky top-0 z-10 flex flex-row items-center justify-between bg-background border-b border-border px-5 py-4">
+          <SheetTitle className="text-base font-semibold text-foreground">
+            {a ? `${a.firstName} ${a.lastName}` : 'Attendee Details'}
+          </SheetTitle>
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            aria-label="Close"
+          >
+            <X className="size-4" />
+          </button>
+        </SheetHeader>
+
+        <div className="px-5 py-5 space-y-6">
+          {loading && (
+            <div className="flex items-center justify-center py-16">
+              <Loader2 className="size-6 animate-spin text-muted-foreground" />
+            </div>
+          )}
+
+          {error && !loading && (
+            <p className="text-sm text-red-400 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2">
+              {error}
+            </p>
+          )}
+
+          {!loading && !error && a && (
+            <>
+              {/* Personal info */}
+              <Section icon={User} title="Personal Details">
+                <DetailRow label="Full Name"  value={`${a.firstName} ${a.lastName}`} />
+                <DetailRow label="Email"      value={a.email} />
+                <DetailRow label="Date of Birth" value={a.dob
+                  ? new Date(a.dob).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                  : null}
+                />
+                <DetailRow label="Joined" value={
+                  new Date(a.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
+                } />
+              </Section>
+
+              {/* Location */}
+              <Section icon={MapPin} title="Location">
+                <DetailRow label="City"    value={a.city} />
+                <DetailRow label="State"   value={a.state} />
+                <DetailRow label="Country" value={a.country} />
+                <DetailRow label="Delivery Address" value={a.deliveryAddress} />
+              </Section>
+
+              {/* Orders */}
+              <Section icon={ShoppingBag} title={`Orders (${detail.orders.length})`}>
+                {detail.orders.length === 0 ? (
+                  <p className="text-xs text-muted-foreground py-2">No orders found.</p>
+                ) : (
+                  <div className="space-y-2 pt-1">
+                    {detail.orders.map(o => (
+                      <div key={o.id} className="rounded-lg border border-border bg-muted/30 px-3 py-2.5 space-y-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs font-mono text-muted-foreground truncate">{o.id}</span>
+                          <StatusBadge status={o.status} />
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-foreground font-medium">£{o.totalPrice}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(o.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                          </span>
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-muted-foreground">
+                          <span>Qty: {o.quantity}</span>
+                          <span>{o.deliveryOption.replace(/_/g, ' ')}</span>
+                        </div>
+                        {o.receiptUrl && (
+                          <a
+                            href={o.receiptUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-400 transition-colors"
+                          >
+                            View receipt <ExternalLink className="size-3" />
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Section>
+
+              {/* Payments */}
+              <Section icon={CreditCard} title={`Payments (${detail.payments.length})`}>
+                {detail.payments.length === 0 ? (
+                  <p className="text-xs text-muted-foreground py-2">No payments found.</p>
+                ) : (
+                  <div className="space-y-2 pt-1">
+                    {detail.payments.map(t => (
+                      <div key={t.id} className="rounded-lg border border-border bg-muted/30 px-3 py-2.5 space-y-1.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs font-mono text-muted-foreground truncate">{t.reference}</span>
+                          <StatusBadge status={t.status} />
+                        </div>
+                        <div className="flex items-center justify-between text-sm">
+                          <span className="text-foreground font-medium">
+                            {t.currency === 'GBP' ? '£' : '₦'}{t.amount}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {new Date(t.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                          </span>
+                        </div>
+                        {(t.receiptUrl ?? t.orders?.receiptUrl) && (
+                          <a
+                            href={t.receiptUrl ?? t.orders?.receiptUrl ?? '#'}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-xs text-blue-500 hover:text-blue-400 transition-colors"
+                          >
+                            View receipt <ExternalLink className="size-3" />
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Section>
+            </>
+          )}
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
+// ─── Table ─────────────────────────────────────────────────────────────────────
 
 interface AttendeesTableProps {
   /** Regular admin and super_admin can soft-delete (archive). */
@@ -17,22 +212,25 @@ interface AttendeesTableProps {
 export function AttendeesTable({ canSoftDelete = false, canDelete = false }: AttendeesTableProps) {
   const { confirm, dialog } = useConfirmDialog();
   const [attendees, setAttendees] = useState<Attendee[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [search, setSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [meta, setMeta] = useState({ total: 0, pages: 1 });
+  const [loading, setLoading]     = useState(false);
+  const [search, setSearch]       = useState('');
+  const [page, setPage]           = useState(1);
+  const [meta, setMeta]           = useState({ total: 0, pages: 1 });
   // Encodes both the record id and the action: "<id>:soft" | "<id>:delete"
-  const [busyId, setBusyId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [busyId, setBusyId]       = useState<string | null>(null);
+  const [error, setError]         = useState<string | null>(null);
+
+  // Detail sheet state
+  const [sheetOpen, setSheetOpen]       = useState(false);
+  const [sheetDetail, setSheetDetail]   = useState<AttendeeDetail | null>(null);
+  const [sheetLoading, setSheetLoading] = useState(false);
+  const [sheetError, setSheetError]     = useState<string | null>(null);
 
   const fetchAttendees = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const params = new URLSearchParams({
-        page: String(page),
-        limit: String(PAGE_SIZE),
-      });
+      const params = new URLSearchParams({ page: String(page), limit: String(PAGE_SIZE) });
       if (search) params.set('search', search);
       const res = await api.get<Paginated<Attendee>>(`/admin/attendees?${params}`);
       setAttendees(res.data);
@@ -44,9 +242,30 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
     }
   }, [page, search]);
 
-  useEffect(() => {
-    void fetchAttendees();
-  }, [fetchAttendees]);
+  useEffect(() => { void fetchAttendees(); }, [fetchAttendees]);
+
+  async function openDetail(a: Attendee) {
+    setSheetOpen(true);
+    setSheetError(null);
+    setSheetDetail(null);
+    setSheetLoading(true);
+    try {
+      // Fetch orders and payments for this attendee in parallel using email search
+      const [ordersRes, paymentsRes] = await Promise.all([
+        api.get<Paginated<Order>>(`/admin/orders?search=${encodeURIComponent(a.email)}&limit=50`),
+        api.get<Paginated<Transaction>>(`/admin/payments?search=${encodeURIComponent(a.email)}&limit=50`),
+      ]);
+      setSheetDetail({
+        attendee: a,
+        orders:   ordersRes.data,
+        payments: paymentsRes.data,
+      });
+    } catch (err) {
+      setSheetError(err instanceof Error ? err.message : 'Failed to load attendee details');
+    } finally {
+      setSheetLoading(false);
+    }
+  }
 
   async function softDeleteAttendee(id: string, email: string) {
     const ok = await confirm({
@@ -81,6 +300,7 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
     setError(null);
     try {
       await api.delete(`/admin/attendees/${id}`);
+      setSheetOpen(false);
       await fetchAttendees();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to delete attendee');
@@ -90,11 +310,20 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
   }
 
   const hasActions = canSoftDelete || canDelete;
-  const colSpan = hasActions ? 6 : 5;
+  const colSpan    = hasActions ? 6 : 5;
 
   return (
     <div className="space-y-3">
       {dialog}
+
+      <AttendeeDetailSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        detail={sheetDetail}
+        loading={sheetLoading}
+        error={sheetError}
+      />
+
       {error && (
         <p className="text-xs text-red-400 rounded-lg border border-red-500/20 bg-red-500/10 px-3 py-2">
           {error}
@@ -107,10 +336,7 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
           <Input
             placeholder="Search name, email, city…"
             value={search}
-            onChange={e => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
             className="pl-9 bg-white/5 border-foreground/50 text-foreground placeholder:text-slate-600 h-9 text-sm"
           />
         </div>
@@ -130,11 +356,7 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
             <thead>
               <tr className="border-b border-white/[0.06] bg-foreground">
                 {[
-                  'Name',
-                  'Email',
-                  'Location',
-                  'Orders',
-                  'Joined',
+                  'Name', 'Email', 'Location', 'Orders', 'Joined',
                   ...(hasActions ? ['Actions'] : []),
                 ].map(h => (
                   <th
@@ -146,7 +368,7 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-border">
               {loading && attendees.length === 0 ? (
                 <tr>
                   <td colSpan={colSpan} className="px-4 py-10 text-center">
@@ -161,9 +383,16 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
                 </tr>
               ) : (
                 attendees.map(a => (
-                  <tr key={a.id} className="hover:bg-sidebar transition-colors">
-                    <td className="px-4 py-3 font-medium text-foreground">
-                      {a.firstName} {a.lastName}
+                  <tr key={a.id} className="bg-white hover:bg-muted/40 transition-colors">
+                    {/* Clickable name opens detail sheet */}
+                    <td className="px-4 py-3">
+                      <button
+                        type="button"
+                        onClick={() => void openDetail(a)}
+                        className="font-medium text-amber-600  hover:text-amber-600 transition-colors text-left cursor-pointer"
+                      >
+                        {a.firstName} {a.lastName}
+                      </button>
                     </td>
                     <td className="px-4 py-3 text-foreground/95 text-xs">{a.email}</td>
                     <td className="px-4 py-3 text-foreground/95 text-xs">
@@ -172,9 +401,7 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
                     <td className="px-4 py-3 text-foreground">{a._count?.orders ?? 0}</td>
                     <td className="px-4 py-3 text-foreground/95 text-xs whitespace-nowrap">
                       {new Date(a.createdAt).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
+                        day: '2-digit', month: 'short', year: 'numeric',
                       })}
                     </td>
                     {hasActions && (
@@ -189,9 +416,9 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
                                 type="button"
                                 onClick={() => void softDeleteAttendee(a.id, a.email)}
                                 title="Archive attendee"
-                                className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                                className="flex items-center gap-2 rounded-full border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors px-3 py-1"
                               >
-                                <Trash2 className="size-3.5" />
+                                <Archive className="size-3.5" /> Delete
                               </button>
                             )}
                             {/* Hard delete — super_admin only */}
@@ -200,9 +427,9 @@ export function AttendeesTable({ canSoftDelete = false, canDelete = false }: Att
                                 type="button"
                                 onClick={() => void deleteAttendee(a.id, a.email)}
                                 title="Permanently delete attendee"
-                                className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                                className="flex items-center gap-2 rounded-full border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors px-3 py-1"
                               >
-                                <Trash2 className="size-3.5" />
+                                <Trash2 className="size-3.5" /> Delete
                               </button>
                             )}
                           </div>

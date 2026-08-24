@@ -186,7 +186,7 @@ export function PaymentsTable({ onChanged, canSoftDelete = false, canDelete = fa
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-border">
               {loading && txns.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-10 text-center">
@@ -201,7 +201,7 @@ export function PaymentsTable({ onChanged, canSoftDelete = false, canDelete = fa
                 </tr>
               ) : (
                 txns.map(t => (
-                  <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={t.id} className="bg-white hover:bg-muted/40 transition-colors">
                     <td className="px-4 py-3">
                       {t.attendees ? (
                         <>
@@ -254,14 +254,14 @@ export function PaymentsTable({ onChanged, canSoftDelete = false, canDelete = fa
                           <Link
                             to={paymentDetailPath(location.pathname, t.id)}
                             title="View details"
-                            className="flex size-8 items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                            className="flex items-center gap-2 rounded-full border border-white/10 text-slate-400 hover:text-white hover:bg-[#000000] transition-colors px-3 py-1"
                           >
-                            <Eye className="size-3.5" />
+                            <Eye className="size-3.5" /> View
                           </Link>
                           <select
                             value={t.status}
                             onChange={e => void updateStatus(t.id, e.target.value)}
-                            className="text-xs bg-white/5 border border-foreground/10 text-slate-500 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                            className="text-xs bg-white/5 border border-foreground/10 text-slate-500 rounded-lg px-3 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
                           >
                             {PAYMENT_STATUSES.map(s => (
                               <option key={s} value={s} className="bg-slate-900">
@@ -275,9 +275,9 @@ export function PaymentsTable({ onChanged, canSoftDelete = false, canDelete = fa
                               type="button"
                               onClick={() => void softDeletePayment(t.id)}
                               title="Archive payment"
-                              className="flex size-8 items-center justify-center rounded-lg border border-amber-500/20 text-amber-500 hover:bg-amber-500/10 transition-colors"
+                              className="flex items-center gap-2 rounded-full border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors px-3 py-1"
                             >
-                              <Archive className="size-3.5" />
+                              <Archive className="size-3.5" /> Delete
                             </button>
                           )}
                           {/* Hard delete — super_admin only */}
@@ -286,9 +286,9 @@ export function PaymentsTable({ onChanged, canSoftDelete = false, canDelete = fa
                               type="button"
                               onClick={() => void deletePayment(t.id)}
                               title="Permanently delete payment"
-                              className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                              className="flex items-center gap-2  rounded-full border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors px-3 py-1"
                             >
-                              <Trash2 className="size-3.5" />
+                              <Trash2 className="size-3.5" /> Delete
                             </button>
                           )}
                         </div>
