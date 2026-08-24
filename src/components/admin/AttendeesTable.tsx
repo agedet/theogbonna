@@ -8,16 +8,20 @@ import { TablePagination } from './TablePagination';
 import { PAGE_SIZE, type Attendee, type Paginated } from './types';
 
 interface AttendeesTableProps {
+  /** Regular admin and super_admin can soft-delete (archive). */
+  canSoftDelete?: boolean;
+  /** Hard (permanent) delete — super_admin only. */
   canDelete?: boolean;
 }
 
-export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
+export function AttendeesTable({ canSoftDelete = false, canDelete = false }: AttendeesTableProps) {
   const { confirm, dialog } = useConfirmDialog();
   const [attendees, setAttendees] = useState<Attendee[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [meta, setMeta] = useState({ total: 0, pages: 1 });
+  // Encodes both the record id and the action: "<id>:soft" | "<id>:delete"
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -44,16 +48,36 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
     void fetchAttendees();
   }, [fetchAttendees]);
 
+  async function softDeleteAttendee(id: string, email: string) {
+    const ok = await confirm({
+      title: 'Archive attendee?',
+      description: `Archive ${email}? The record will be hidden from normal views but can be restored by a super admin.`,
+      confirmLabel: 'Archive',
+    });
+    if (!ok) return;
+
+    setBusyId(`${id}:soft`);
+    setError(null);
+    try {
+      await api.patch(`/admin/attendees/${id}/soft-delete`, {});
+      await fetchAttendees();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to archive attendee');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   async function deleteAttendee(id: string, email: string) {
     const ok = await confirm({
-      title: 'Delete attendee?',
+      title: 'Permanently delete attendee?',
       description: `Delete ${email}? Related payments will be removed and orders unlinked. This cannot be undone.`,
       confirmLabel: 'Delete attendee',
       variant: 'destructive',
     });
     if (!ok) return;
 
-    setBusyId(id);
+    setBusyId(`${id}:delete`);
     setError(null);
     try {
       await api.delete(`/admin/attendees/${id}`);
@@ -65,7 +89,8 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
     }
   }
 
-  const colSpan = canDelete ? 6 : 5;
+  const hasActions = canSoftDelete || canDelete;
+  const colSpan = hasActions ? 6 : 5;
 
   return (
     <div className="space-y-3">
@@ -110,7 +135,7 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
                   'Location',
                   'Orders',
                   'Joined',
-                  ...(canDelete ? ['Actions'] : []),
+                  ...(hasActions ? ['Actions'] : []),
                 ].map(h => (
                   <th
                     key={h}
@@ -145,26 +170,42 @@ export function AttendeesTable({ canDelete = false }: AttendeesTableProps) {
                       {[a.city, a.state, a.country].filter(Boolean).join(', ') || '—'}
                     </td>
                     <td className="px-4 py-3 text-foreground">{a._count?.orders ?? 0}</td>
-                    <td className="px-4 py-3 text-forground/95 text-xs whitespace-nowrap">
+                    <td className="px-4 py-3 text-foreground/95 text-xs whitespace-nowrap">
                       {new Date(a.createdAt).toLocaleDateString('en-GB', {
                         day: '2-digit',
                         month: 'short',
                         year: 'numeric',
                       })}
                     </td>
-                    {canDelete && (
+                    {hasActions && (
                       <td className="px-4 py-3">
-                        {busyId === a.id ? (
+                        {busyId?.startsWith(a.id) ? (
                           <Loader2 className="size-4 animate-spin text-foreground/90" />
                         ) : (
-                          <button
-                            type="button"
-                            onClick={() => void deleteAttendee(a.id, a.email)}
-                            title="Delete attendee"
-                            className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
-                          >
-                            <Trash2 className="size-3.5" />
-                          </button>
+                          <div className="flex items-center gap-2">
+                            {/* Soft delete — admin + super_admin */}
+                            {canSoftDelete && (
+                              <button
+                                type="button"
+                                onClick={() => void softDeleteAttendee(a.id, a.email)}
+                                title="Archive attendee"
+                                className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                              >
+                                <Trash2 className="size-3.5" />
+                              </button>
+                            )}
+                            {/* Hard delete — super_admin only */}
+                            {canDelete && (
+                              <button
+                                type="button"
+                                onClick={() => void deleteAttendee(a.id, a.email)}
+                                title="Permanently delete attendee"
+                                className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                              >
+                                <Trash2 className="size-3.5" />
+                              </button>
+                            )}
+                          </div>
                         )}
                       </td>
                     )}

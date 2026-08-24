@@ -66,7 +66,8 @@ export default function AdminDashboardPage() {
     void fetchStats();
   }, [fetchStats]);
 
-  const isSuperAdmin = user?.role === 'super_admin';
+  const isSuperAdmin  = user?.role === 'super_admin';
+  const canSoftDelete = user?.role === 'admin' || user?.role === 'super_admin';
 
   return (
     <div className="p-6 space-y-6">
@@ -144,9 +145,9 @@ export default function AdminDashboardPage() {
         transition={{ duration: 0.2 }}
       >
         {tab === 'orders' ? (
-          <OrdersTable onChanged={fetchStats} canDelete={isSuperAdmin} />
+          <OrdersTable onChanged={fetchStats} canSoftDelete={canSoftDelete} canDelete={isSuperAdmin} />
         ) : (
-          <PaymentsTable onChanged={fetchStats} canDelete={isSuperAdmin} />
+          <PaymentsTable onChanged={fetchStats} canSoftDelete={canSoftDelete} canDelete={isSuperAdmin} />
         )}
       </motion.div>
     </div>

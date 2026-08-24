@@ -93,7 +93,7 @@ export const DashboardSidebar = ({
           <div className="flex items-center gap-3 mb-3 p-2">
             <Avatar className="h-10 w-10 border border-border">
               <AvatarImage src={user.picture ?? undefined} alt={displayName} />
-              <AvatarFallback className="bg-amber-500/15 text-amber-400">
+              <AvatarFallback className="bg-slate-900 text-white">
                 {initials}
               </AvatarFallback>
             </Avatar>

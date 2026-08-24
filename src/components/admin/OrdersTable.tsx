@@ -17,6 +17,9 @@ import {
 
 interface OrdersTableProps {
   onChanged?: () => void;
+  /** Regular admin and super_admin can soft-delete (archive). */
+  canSoftDelete?: boolean;
+  /** Hard (permanent) delete — super_admin only. */
   canDelete?: boolean;
 }
 
@@ -25,7 +28,7 @@ function orderDetailPath(pathname: string, id: string) {
   return `${base}/${id}`;
 }
 
-export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) {
+export function OrdersTable({ onChanged, canSoftDelete = false, canDelete = false }: OrdersTableProps) {
   const location = useLocation();
   const { confirm, dialog } = useConfirmDialog();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -82,16 +85,37 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
     }
   }
 
+  async function softDeleteOrder(orderId: string) {
+    const ok = await confirm({
+      title: 'Archive order?',
+      description: 'Archive this order? It will be hidden from normal views but can be restored by a super admin.',
+      confirmLabel: 'Archive',
+    });
+    if (!ok) return;
+
+    setBusyId(`${orderId}:soft`);
+    setError(null);
+    try {
+      await api.patch(`/admin/orders/${orderId}/soft-delete`, {});
+      await fetchOrders();
+      onChanged?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to archive order');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
   async function deleteOrder(orderId: string) {
     const ok = await confirm({
-      title: 'Delete order?',
+      title: 'Permanently delete order?',
       description: 'This will permanently delete the order and its related payments. This cannot be undone.',
       confirmLabel: 'Delete order',
       variant: 'destructive',
     });
     if (!ok) return;
 
-    setBusyId(orderId);
+    setBusyId(`${orderId}:delete`);
     setError(null);
     try {
       await api.delete(`/admin/orders/${orderId}`);
@@ -224,7 +248,7 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                       <StatusBadge status={o.status} />
                     </td>
                     <td className="px-4 py-3">
-                      {busyId === o.id ? (
+                      {busyId?.startsWith(o.id) ? (
                         <Loader2 className="size-4 animate-spin text-foreground" />
                       ) : (
                         <div className="flex items-center gap-2">
@@ -246,11 +270,23 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                               </option>
                             ))}
                           </select>
+                          {/* Soft delete — admin + super_admin */}
+                          {canSoftDelete && (
+                            <button
+                              type="button"
+                              onClick={() => void softDeleteOrder(o.id)}
+                              title="Archive order"
+                              className="flex size-8 items-center justify-center rounded-lg border border-amber-500/20 text-amber-500 hover:bg-amber-500/10 transition-colors"
+                            >
+                              <Archive className="size-3.5" />
+                            </button>
+                          )}
+                          {/* Hard delete — super_admin only */}
                           {canDelete && (
                             <button
                               type="button"
                               onClick={() => void deleteOrder(o.id)}
-                              title="Delete order"
+                              title="Permanently delete order"
                               className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
                             >
                               <Trash2 className="size-3.5" />
