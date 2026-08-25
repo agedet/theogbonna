@@ -43,7 +43,7 @@ export default function ProductSection() {
           >
             <div>
               <h2 className="mb-3 font-serif text-2xl text-white sm:mb-4 sm:text-3xl md:text-4xl">
-                Official Asoebi Material
+                Asoebi for Women
               </h2>
               <p className="text-sm leading-relaxed text-slate-400 sm:text-base md:text-lg">
                 Honor our parents&apos; memory by adorning this premium selected fabric.
