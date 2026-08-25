@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import Material1 from '@/assets/material1.png';
 import Material from '@/assets/material2.png';
-import MensAsoebi from '@/assets/mens-asoebi-p.png';
+import MensAsoebi from '@/assets/Mens_Asoebi_Cap.jpeg';
+import MensAsoOke from '@/assets/Mens_Asoebi_fabric.jpeg';
 
 export default function ProductSection() {
   const navigate = useNavigate();
@@ -89,14 +90,22 @@ export default function ProductSection() {
         {/* ── Men's Asoebi ── */}
         <div className="grid grid-cols-1 items-center gap-10 sm:gap-14 lg:grid-cols-2 lg:gap-16">
           {/* Image */}
-          <div className="relative mx-auto w-full max-w-md lg:mx-0 lg:max-w-md">
+          <div className="relative mx-auto w-full max-w-md pb-16 sm:max-w-lg sm:pb-20  lg:mx-0 lg:max-w-none lg:pb-24">
             <motion.img
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               src={MensAsoebi}
               alt="Men's Asoebi Cap"
-              className="w-full rounded-xl object-cover shadow-xl sm:rounded-2xl sm:max-h-[26rem] lg:max-h-[30rem]"
+              className="relative z-10 w-[78%] max-w-full rounded-xl object-cover shadow-xl sm:rounded-2xl aspect-[4/5] sm:aspect-auto sm:max-h-[28rem] lg:max-h-[30rem]"
+            />
+            <motion.img
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              src={MensAsoOke}
+              alt="Men's Asoebi Cap"
+              className="absolute -right-1 bottom-0 z-20 w-[52%] max-w-[14rem] rounded-xl border-4 border-slate-900 object-cover shadow-2xl sm:-right-2 sm:bottom-2 sm:w-[48%] sm:max-w-[16rem] sm:rounded-2xl md:max-w-[18rem] aspect-[3/4]"
             />
           </div>
 
