@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async';
 import { useState, useId, useEffect, useRef } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronLeft, ChevronRight, Check, Copy, AlertCircle,
@@ -13,21 +13,38 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import OgbonnaLogo from '@/assets/ogbonna-logo.png'
+import OgbonnaLogo from '@/assets/ogbonna-logo.png';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const API_BASE    = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
-const UNIT_PRICE  = 100; // GBP
+const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
+
+// Product catalogue — add new products here
+const PRODUCTS = {
+  womens: {
+    label:       '5 Yards Beaded Lace & Gele',
+    unitPrice:   100,
+    apiType:     'WOMENS_ASOEBI',
+    description: 'Official women\'s asoebi material — 5 Yards Beaded Lace & Gele',
+  },
+  mens: {
+    label:       'Men\'s Aso Oke Cap',
+    unitPrice:   10,
+    apiType:     'MENS_ASOEBI',
+    description: 'Aso Oke strips for cap, tailored to preferred style & head size',
+  },
+} as const;
+
+type ProductKey = keyof typeof PRODUCTS;
 
 const DELIVERY_OPTIONS = [
-  { value: 'PICKUP',        label: 'Will Pickup',         fee: 0  },
-  { value: 'LAGOS',         label: 'Lagos',               fee: 10 },
-  { value: 'ABUJA',         label: 'Abuja',               fee: 10 },
-  { value: 'PORT_HARCOURT', label: 'Port Harcourt',       fee: 6  },
-  { value: 'ENUGU',         label: 'Enugu',               fee: 6  },
-  { value: 'ONITSHA',       label: 'Onitsha',             fee: 6  },
-  { value: 'OTHER',         label: 'Other (contact us)',  fee: 10 },
+  { value: 'PICKUP',        label: 'Will Pickup',        fee: 0  },
+  { value: 'LAGOS',         label: 'Lagos',              fee: 10 },
+  { value: 'ABUJA',         label: 'Abuja',              fee: 10 },
+  { value: 'PORT_HARCOURT', label: 'Port Harcourt',      fee: 6  },
+  { value: 'ENUGU',         label: 'Enugu',              fee: 6  },
+  { value: 'ONITSHA',       label: 'Onitsha',            fee: 6  },
+  { value: 'OTHER',         label: 'Other (contact us)', fee: 10 },
 ] as const;
 
 type DeliveryValue = typeof DELIVERY_OPTIONS[number]['value'];
@@ -66,16 +83,16 @@ interface OrderResult {
 }
 
 const initialForm: FormData = {
-  firstName: '',
-  lastName:  '',
-  email: '', 
-  phone: '', 
-  whatsapp: '',
-  quantity: 1, 
-  deliveryOption: 'PICKUP',
-  deliveryAddress: '', 
-  deliveryState: '', 
-  paymentRef: '',
+  firstName:       '',
+  lastName:        '',
+  email:           '',
+  phone:           '',
+  whatsapp:        '',
+  quantity:        1,
+  deliveryOption:  'PICKUP',
+  deliveryAddress: '',
+  deliveryState:   '',
+  paymentRef:      '',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -86,8 +103,8 @@ function getDeliveryFee(o: DeliveryValue) {
 function getDeliveryLabel(o: DeliveryValue) {
   return DELIVERY_OPTIONS.find(d => d.value === o)?.label ?? o;
 }
-function computeTotal(qty: number, d: DeliveryValue) {
-  return qty * UNIT_PRICE + getDeliveryFee(d);
+function computeTotal(qty: number, d: DeliveryValue, unitPrice: number) {
+  return qty * unitPrice + getDeliveryFee(d);
 }
 function formatNgn(n: number) {
   return `₦${Math.round(n).toLocaleString('en-NG')}`;
@@ -124,7 +141,6 @@ function NgnEquivalent({ gbpTotal, rate, loading, error, onRetry }: {
   gbpTotal: number; rate: ExchangeRate | null;
   loading: boolean; error: boolean; onRetry: () => void;
 }) {
-  // Capture render time once so Date.now() isn't called in the pure render path
   const [now] = useState<number>(() => Date.now());
 
   if (loading) return (
@@ -140,7 +156,8 @@ function NgnEquivalent({ gbpTotal, rate, loading, error, onRetry }: {
   );
   const ngn      = Math.round(gbpTotal * rate.rate);
   const ageMin   = Math.round((now - new Date(rate.cachedAt).getTime()) / 60_000);
-  const ageLabel = ageMin < 1 ? 'just now' : `${ageMin}m ago`;  return (
+  const ageLabel = ageMin < 1 ? 'just now' : `${ageMin}m ago`;
+  return (
     <div className="flex items-baseline gap-1.5 flex-wrap">
       <span className="text-sm font-semibold text-emerald-400">{formatNgn(ngn)}</span>
       <span className="text-xs text-slate-500">
@@ -234,7 +251,7 @@ function CopyButton({ text }: { text: string }) {
   }
   return (
     <button type="button" onClick={handleCopy}
-      className="flex items-center gap-1 text-xs ttext-amber-400 hover:text-amber-300 transition-colors"
+      className="flex items-center gap-1 text-xs text-amber-400 hover:text-amber-300 transition-colors"
       aria-label={`Copy ${text}`}>
       {copied ? <Check className="size-3" /> : <Copy className="size-3" />}
       {copied ? 'Copied' : 'Copy'}
@@ -306,15 +323,16 @@ function StepDetails({ data, onChange, onNext }: {
 
 // ─── Step 2 — Review order ────────────────────────────────────────────────────
 
-function StepReview({ data, onChange, onBack, onNext }: {
+function StepReview({ data, onChange, onBack, onNext, productLabel, unitPrice }: {
   data: FormData; onChange: (p: Partial<FormData>) => void;
   onBack: () => void; onNext: () => void;
+  productLabel: string; unitPrice: number;
 }) {
   const id = useId();
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const needsAddress = data.deliveryOption !== 'PICKUP';
   const deliveryFee  = getDeliveryFee(data.deliveryOption);
-  const total        = computeTotal(data.quantity, data.deliveryOption);
+  const total        = computeTotal(data.quantity, data.deliveryOption, unitPrice);
 
   function validate() {
     const e: typeof errors = {};
@@ -329,8 +347,8 @@ function StepReview({ data, onChange, onBack, onNext }: {
         <p className="text-sm font-medium text-slate-300 mb-3">How many sets?</p>
         <div className="flex flex-col gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-            <p className="font-medium text-white text-sm sm:text-base">5 Yards Beaded Lace &amp; Gele</p>
-            <p className="mt-0.5 text-sm text-slate-500">£{UNIT_PRICE} per set</p>
+            <p className="font-medium text-white text-sm sm:text-base">{productLabel}</p>
+            <p className="mt-0.5 text-sm text-slate-500">£{unitPrice} per set</p>
           </div>
           <QuantityStepper value={data.quantity} onChange={q => onChange({ quantity: q })} />
         </div>
@@ -373,8 +391,8 @@ function StepReview({ data, onChange, onBack, onNext }: {
       </AnimatePresence>
       <div className="rounded-xl border border-white/10 bg-white/[0.03] divide-y divide-white/[0.06]">
         <div className="flex justify-between px-4 py-3 text-sm">
-          <span className="text-slate-400">Materials ({data.quantity} × £{UNIT_PRICE})</span>
-          <span className="text-white font-medium">£{data.quantity * UNIT_PRICE}</span>
+          <span className="text-slate-400">Item ({data.quantity} × £{unitPrice})</span>
+          <span className="text-white font-medium">£{data.quantity * unitPrice}</span>
         </div>
         <div className="flex justify-between px-4 py-3 text-sm">
           <span className="text-slate-400">Delivery ({getDeliveryLabel(data.deliveryOption)})</span>
@@ -401,15 +419,15 @@ function StepReview({ data, onChange, onBack, onNext }: {
 
 // ─── Step 3 — Payment ─────────────────────────────────────────────────────────
 
-function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchangeRate, rateLoading, rateError, onRateRetry }: {
+function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchangeRate, rateLoading, rateError, onRateRetry, unitPrice }: {
   data: FormData; onChange: (p: Partial<FormData>) => void;
   onBack: () => void; onSubmit: () => void;
   submitting: boolean; serverError: string | null;
   exchangeRate: ExchangeRate | null; rateLoading: boolean;
   rateError: boolean; onRateRetry: () => void;
+  unitPrice: number;
 }) {
-  // const id    = useId();
-  const total = computeTotal(data.quantity, data.deliveryOption);
+  const total = computeTotal(data.quantity, data.deliveryOption, unitPrice);
 
   return (
     <div className="space-y-6">
@@ -453,20 +471,7 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
         </div>
       </div>
 
-      {/* Payment reference */}
       <div className="space-y-1.5">
-        {/* <Field 
-              label="Payment Reference (optional)" 
-              htmlFor={`${id}-ref`}
-        >
-          <Input 
-            id={`${id}-ref`} 
-            placeholder="Your bank transfer reference or receipt number"
-            value={data.paymentRef} 
-            onChange={e => onChange({ paymentRef: e.target.value })}
-            className="bg-white/5 border-white/10 text-white placeholder:text-slate-500 h-11" 
-          />
-        </Field> */}
         <p className="text-xs text-slate-500">
           You can submit now and upload your receipt in the next step.
         </p>
@@ -479,10 +484,10 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
       )}
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row">
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={onBack} 
+        <Button
+          type="button"
+          variant="outline"
+          onClick={onBack}
           disabled={submitting}
           className="h-12 flex-1 rounded-xl border-white/10 text-slate-900 hover:text-white hover:bg-white/10">
           <ChevronLeft className="mr-1 size-4" /> Back
@@ -503,15 +508,17 @@ function StepPayment({ data, onBack, onSubmit, submitting, serverError, exchange
 
 // ─── Step 4 — Upload Receipt ──────────────────────────────────────────────────
 
-function StepUpload({ form, order, onBack, onDone }: {
-  form:   FormData;
-  order:  OrderResult;
-  onBack: () => void;
-  onDone: (receiptUrl: string, whatsappUrl: string) => void;
+function StepUpload({ form, order, onBack, onDone, productLabel, unitPrice }: {
+  form:         FormData;
+  order:        OrderResult;
+  onBack:       () => void;
+  onDone:       (receiptUrl: string, whatsappUrl: string) => void;
+  productLabel: string;
+  unitPrice:    number;
 }) {
-  const fileInputRef  = useRef<HTMLInputElement>(null);
-  const [file, setFile]         = useState<File | null>(null);
-  const [preview, setPreview]   = useState<string | null>(null);
+  const fileInputRef              = useRef<HTMLInputElement>(null);
+  const [file, setFile]           = useState<File | null>(null);
+  const [preview, setPreview]     = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress]   = useState(0);
   const [error, setError]         = useState<string | null>(null);
@@ -534,7 +541,7 @@ function StepUpload({ form, order, onBack, onDone }: {
       reader.onload = e => setPreview(e.target?.result as string);
       reader.readAsDataURL(f);
     } else {
-      setPreview(null); // PDF — show name only
+      setPreview(null);
     }
   }
 
@@ -548,7 +555,6 @@ function StepUpload({ form, order, onBack, onDone }: {
     if (!file) { setError('Please select a file first.'); return; }
     setUploading(true); setError(null);
 
-    // Simulate chunked progress (real progress needs XHR)
     const ticker = setInterval(() => {
       setProgress(p => Math.min(p + 10, 85));
     }, 300);
@@ -559,7 +565,7 @@ function StepUpload({ form, order, onBack, onDone }: {
 
       const res = await fetch(`${API_BASE}/orders/${order.id}/receipt`, {
         method: 'POST',
-        body: fd,
+        body:   fd,
       });
 
       clearInterval(ticker); setProgress(100);
@@ -581,7 +587,7 @@ function StepUpload({ form, order, onBack, onDone }: {
     }
   }
 
-  const total = computeTotal(form.quantity, form.deliveryOption);
+  const total = computeTotal(form.quantity, form.deliveryOption, unitPrice);
 
   return (
     <div className="space-y-6">
@@ -592,6 +598,7 @@ function StepUpload({ form, order, onBack, onDone }: {
         </div>
         {[
           { label: 'Order ID',    value: order.id },
+          { label: 'Item',        value: productLabel },
           { label: 'Name',        value: `${form.firstName} ${form.lastName}` },
           { label: 'Quantity',    value: `${form.quantity} set(s)` },
           { label: 'Total Paid',  value: `£${total}` },
@@ -702,13 +709,22 @@ const slideVariants = {
 };
 
 export default function CheckoutPage() {
-  const navigate = useNavigate();
-  const [step, setStep]           = useState(0);
-  const [direction, setDirection] = useState(1);
-  const [form, setForm]           = useState<FormData>(initialForm);
-  const [order, setOrder]         = useState<OrderResult | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-  const [serverError, setServerError] = useState<string | null>(null);
+  const navigate                          = useNavigate();
+  const [searchParams]                    = useSearchParams();
+  const [step, setStep]                   = useState(0);
+  const [direction, setDirection]         = useState(1);
+  const [form, setForm]                   = useState<FormData>(initialForm);
+  const [order, setOrder]                 = useState<OrderResult | null>(null);
+  const [submitting, setSubmitting]       = useState(false);
+  const [serverError, setServerError]     = useState<string | null>(null);
+
+  // Resolve product from URL — default to womens if param is missing/invalid
+  const productParam = searchParams.get('product');
+  const productKey: ProductKey =
+    productParam !== null && productParam in PRODUCTS
+      ? (productParam as ProductKey)
+      : 'womens';
+  const product = PRODUCTS[productKey];
 
   const { data: exchangeRate, loading: rateLoading, error: rateError, refetch: rateRetry } = useExchangeRate();
 
@@ -733,6 +749,7 @@ export default function CheckoutPage() {
           deliveryAddress: form.deliveryAddress || undefined,
           deliveryState:   form.deliveryState   || undefined,
           paymentRef:      form.paymentRef       || undefined,
+          productType:     product.apiType,
         }),
       });
       if (!res.ok) {
@@ -742,14 +759,13 @@ export default function CheckoutPage() {
       }
       const result: OrderResult = await res.json();
       setOrder(result);
-      goNext(); // → step 3 (upload)
+      goNext();
     } catch {
       setServerError('Could not reach the server. Please check your connection and try again.');
     } finally { setSubmitting(false); }
   }
 
   function handleUploadDone(receiptUrl: string, whatsappUrl: string) {
-    // Navigate to success page, then open WhatsApp in a new tab
     navigate('/success', {
       state: {
         orderId:    order!.id,
@@ -759,37 +775,37 @@ export default function CheckoutPage() {
         receiptUrl,
       },
     });
-    // Short delay so the navigation fires first
     setTimeout(() => window.open(whatsappUrl, '_blank', 'noopener,noreferrer'), 500);
   }
 
   const stepContent = [
     <StepDetails key="details" data={form} onChange={patch} onNext={goNext} />,
-    <StepReview  key="review"  data={form} onChange={patch} onBack={goBack} onNext={goNext} />,
+    <StepReview  key="review"  data={form} onChange={patch} onBack={goBack} onNext={goNext}
+      productLabel={product.label} unitPrice={product.unitPrice} />,
     <StepPayment key="payment" data={form} onChange={patch} onBack={goBack}
       onSubmit={handleSubmit} submitting={submitting} serverError={serverError}
       exchangeRate={exchangeRate} rateLoading={rateLoading}
-      rateError={rateError} onRateRetry={rateRetry} />,
+      rateError={rateError} onRateRetry={rateRetry}
+      unitPrice={product.unitPrice} />,
     order
-      ? <StepUpload key="upload" form={form} order={order} onBack={goBack} onDone={handleUploadDone} />
-      : <div key="upload-loading" className="text-center text-slate-500 py-10"><Loader2 className="size-6 animate-spin mx-auto" /></div>,
+      ? <StepUpload key="upload" form={form} order={order} onBack={goBack} onDone={handleUploadDone}
+          productLabel={product.label} unitPrice={product.unitPrice} />
+      : <div key="upload-loading" className="text-center text-slate-500 py-10">
+          <Loader2 className="size-6 animate-spin mx-auto" />
+        </div>,
   ];
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-950 text-slate-200">
       <Helmet>
-        <title>Checkout - Order Your Asoebi | Ogbonnas Memorial</title>
-        <meta name="description" content="Order your 5 Yards Beaded Lace & Gele asoebi for the Ogbonna Memorial celebration. Secure checkout with delivery across Nigeria. £100 per set." />
+        <title>Checkout — {product.label} | Ogbonnas Memorial</title>
+        <meta name="description" content={`Order your ${product.label} for the Ogbonna Memorial celebration. Secure checkout with delivery across Nigeria. £${product.unitPrice} per set.`} />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <header className="sticky top-0 z-40 border-b border-white/5 bg-slate-950/80 backdrop-blur-md">
         <div className="mx-auto flex h-[72px] max-w-xl items-center justify-between px-4 sm:h-[100px] sm:px-6">
           <Link to="/" className="shrink-0">
-            <img
-              src={OgbonnaLogo}
-              alt="Ogbonna logo"
-              className="h-12 w-auto object-contain sm:h-16"
-            />
+            <img src={OgbonnaLogo} alt="Ogbonna logo" className="h-12 w-auto object-contain sm:h-16" />
           </Link>
           <span className="text-[0.65rem] font-mono tracking-wider text-slate-500 uppercase sm:text-xs">
             Secure Checkout
@@ -802,7 +818,7 @@ export default function CheckoutPage() {
           <div className="mb-6 text-center sm:mb-8">
             <h1 className="font-serif text-xl text-white sm:text-2xl">Asoebi Order</h1>
             <p className="mt-1 text-xs text-slate-500 sm:text-sm">
-              5 Yards Beaded Lace &amp; Gele — £100 per set
+              {product.label} — £{product.unitPrice} per set
             </p>
           </div>
 

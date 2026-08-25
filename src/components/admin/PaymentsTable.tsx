@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, RefreshCw, Loader2, ChevronDown, ExternalLink, Trash2, Eye } from 'lucide-react';
+import { Search, RefreshCw, Loader2, ChevronDown, ExternalLink, Trash2, Eye, Archive } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useConfirmDialog } from '@/components/ui/use-confirm-dialog';
 import { api } from '@/lib/api';
@@ -11,6 +11,9 @@ import { PAGE_SIZE, PAYMENT_STATUSES, type Paginated, type Transaction } from '.
 
 interface PaymentsTableProps {
   onChanged?: () => void;
+  /** Regular admin and super_admin can soft-delete (archive). */
+  canSoftDelete?: boolean;
+  /** Hard (permanent) delete — super_admin only. */
   canDelete?: boolean;
 }
 
@@ -19,7 +22,7 @@ function paymentDetailPath(pathname: string, id: string) {
   return `${base}/${id}`;
 }
 
-export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTableProps) {
+export function PaymentsTable({ onChanged, canSoftDelete = false, canDelete = false }: PaymentsTableProps) {
   const location = useLocation();
   const { confirm, dialog } = useConfirmDialog();
   const [txns, setTxns] = useState<Transaction[]>([]);
@@ -76,16 +79,37 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
     }
   }
 
-  async function deletePayment(paymentId: string) {
+  async function softDeletePayment(paymentId: string) {
     const ok = await confirm({
       title: 'Delete payment?',
+      description: 'Delete this payment? It will be deleted',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
+
+    setBusyId(`${paymentId}:soft`);
+    setError(null);
+    try {
+      await api.patch(`/admin/payments/${paymentId}/soft-delete`, {});
+      await fetchTxns();
+      onChanged?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete payment');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function deletePayment(paymentId: string) {
+    const ok = await confirm({
+      title: 'Permanently delete payment?',
       description: 'This will permanently delete this payment record. This cannot be undone.',
       confirmLabel: 'Delete payment',
       variant: 'destructive',
     });
     if (!ok) return;
 
-    setBusyId(paymentId);
+    setBusyId(`${paymentId}:delete`);
     setError(null);
     try {
       await api.delete(`/admin/payments/${paymentId}`);
@@ -162,7 +186,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/[0.04]">
+            <tbody className="divide-y divide-border">
               {loading && txns.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-4 py-10 text-center">
@@ -177,7 +201,7 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                 </tr>
               ) : (
                 txns.map(t => (
-                  <tr key={t.id} className="hover:bg-white/[0.02] transition-colors">
+                  <tr key={t.id} className="bg-white hover:bg-muted/40 transition-colors">
                     <td className="px-4 py-3">
                       {t.attendees ? (
                         <>
@@ -223,21 +247,21 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                       <StatusBadge status={t.status} />
                     </td>
                     <td className="px-4 py-3">
-                      {busyId === t.id ? (
+                      {busyId?.startsWith(t.id) ? (
                         <Loader2 className="size-4 animate-spin text-slate-500" />
                       ) : (
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2">
                           <Link
                             to={paymentDetailPath(location.pathname, t.id)}
                             title="View details"
-                            className="flex size-8 items-center justify-center rounded-lg border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                            className="flex items-center gap-2 rounded-full border border-white/10 text-slate-400 hover:text-white hover:bg-[#000000] transition-colors px-3 py-1"
                           >
-                            <Eye className="size-3.5" />
+                            <Eye className="size-3.5" /> View
                           </Link>
                           <select
                             value={t.status}
                             onChange={e => void updateStatus(t.id, e.target.value)}
-                            className="text-xs bg-white/5 border border-foreground/10 text-slate-500 rounded-lg px-2 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                            className="text-xs bg-white/5 border border-foreground/10 text-slate-500 rounded-lg px-3 py-1 cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
                           >
                             {PAYMENT_STATUSES.map(s => (
                               <option key={s} value={s} className="bg-slate-900">
@@ -245,14 +269,26 @@ export function PaymentsTable({ onChanged, canDelete = false }: PaymentsTablePro
                               </option>
                             ))}
                           </select>
+                          {/* Soft delete — admin + super_admin */}
+                          {canSoftDelete && (
+                            <button
+                              type="button"
+                              onClick={() => void softDeletePayment(t.id)}
+                              title="Archive payment"
+                              className="flex items-center gap-2 rounded-full border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors px-3 py-1"
+                            >
+                              <Archive className="size-3.5" /> Delete
+                            </button>
+                          )}
+                          {/* Hard delete — super_admin only */}
                           {canDelete && (
                             <button
                               type="button"
                               onClick={() => void deletePayment(t.id)}
-                              title="Delete payment"
-                              className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
+                              title="Permanently delete payment"
+                              className="flex items-center gap-2  rounded-full border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors px-3 py-1"
                             >
-                              <Trash2 className="size-3.5" />
+                              <Trash2 className="size-3.5" /> Delete
                             </button>
                           )}
                         </div>

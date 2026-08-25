@@ -33,7 +33,7 @@ export function TablePagination({
           size="sm"
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
-          className="h-7 px-3 text-xs border-white/10 text-slate-400 hover:text-white hover:bg-white/10 disabled:opacity-40"
+          className="h-7 px-3 text-xs border-foreground bg-foreground text-white hover:text-foreground hover:bg-white/10 disabled:opacity-40"
         >
           Prev
         </Button>
@@ -45,7 +45,7 @@ export function TablePagination({
           size="sm"
           disabled={page >= pages}
           onClick={() => onPageChange(page + 1)}
-          className="h-7 px-3 text-xs border-white/10 text-slate-400 hover:text-white hover:bg-white/10 disabled:opacity-40"
+          className="h-7 px-3 text-xs border-foreground bg-foreground text-white hover:text-slate-900 hover:bg-slate-900/10 disabled:opacity-40"
         >
           Next
         </Button>

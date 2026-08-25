@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, RefreshCw, Loader2, ChevronDown, ExternalLink, Trash2, Eye } from 'lucide-react';
+import { Search, RefreshCw, Loader2, ChevronDown, ExternalLink, Trash2, Eye, Archive } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useConfirmDialog } from '@/components/ui/use-confirm-dialog';
 import { api } from '@/lib/api';
@@ -17,6 +17,9 @@ import {
 
 interface OrdersTableProps {
   onChanged?: () => void;
+  /** Regular admin and super_admin can soft-delete (archive). */
+  canSoftDelete?: boolean;
+  /** Hard (permanent) delete — super_admin only. */
   canDelete?: boolean;
 }
 
@@ -25,7 +28,7 @@ function orderDetailPath(pathname: string, id: string) {
   return `${base}/${id}`;
 }
 
-export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) {
+export function OrdersTable({ onChanged, canSoftDelete = false, canDelete = false }: OrdersTableProps) {
   const location = useLocation();
   const { confirm, dialog } = useConfirmDialog();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -82,16 +85,37 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
     }
   }
 
-  async function deleteOrder(orderId: string) {
+  async function softDeleteOrder(orderId: string) {
     const ok = await confirm({
       title: 'Delete order?',
+      description: 'Delete this order? It will be deleted.',
+      confirmLabel: 'Delete',
+    });
+    if (!ok) return;
+
+    setBusyId(`${orderId}:soft`);
+    setError(null);
+    try {
+      await api.patch(`/admin/orders/${orderId}/soft-delete`, {});
+      await fetchOrders();
+      onChanged?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to archive order');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function deleteOrder(orderId: string) {
+    const ok = await confirm({
+      title: 'Permanently delete order?',
       description: 'This will permanently delete the order and its related payments. This cannot be undone.',
       confirmLabel: 'Delete order',
       variant: 'destructive',
     });
     if (!ok) return;
 
-    setBusyId(orderId);
+    setBusyId(`${orderId}:delete`);
     setError(null);
     try {
       await api.delete(`/admin/orders/${orderId}`);
@@ -186,11 +210,11 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                 </tr>
               ) : (
                 orders.map(o => (
-                  <tr key={o.id} className="hover:bg-muted/40 transition-colors">
+                  <tr key={o.id} className="bg-white hover:bg-muted/40 transition-colors">
                     <td className="px-4 py-3">
                       <Link
                         to={orderDetailPath(location.pathname, o.id)}
-                        className="font-medium text-foreground hover:text-amber-600 transition-colors"
+                        className="font-bold text-foreground hover:text-amber-600 transition-colors"
                       >
                         {o.fullName}
                       </Link>
@@ -224,21 +248,21 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                       <StatusBadge status={o.status} />
                     </td>
                     <td className="px-4 py-3">
-                      {busyId === o.id ? (
+                      {busyId?.startsWith(o.id) ? (
                         <Loader2 className="size-4 animate-spin text-foreground" />
                       ) : (
                         <div className="flex items-center gap-2">
                           <Link
                             to={orderDetailPath(location.pathname, o.id)}
                             title="View details"
-                            className="flex size-8 items-center justify-center rounded-lg border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                            className="flex items-center gap-2 rounded-full border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors px-3 py-1"
                           >
-                            <Eye className="size-3.5" />
+                            <Eye className="size-3.5" /> View
                           </Link>
                           <select
                             value={o.status}
                             onChange={e => void updateStatus(o.id, e.target.value)}
-                            className="text-xs bg-background border border-border text-foreground rounded-lg px-2 py-1 max-w-[140px] cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                            className="text-xs bg-background border border-border text-foreground rounded-lg px-3 py-1 max-w-[140px] cursor-pointer focus:outline-none focus:ring-1 focus:ring-amber-500/50"
                           >
                             {ORDER_STATUSES.map(s => (
                               <option key={s} value={s}>
@@ -246,16 +270,36 @@ export function OrdersTable({ onChanged, canDelete = false }: OrdersTableProps) 
                               </option>
                             ))}
                           </select>
-                          {canDelete && (
-                            <button
-                              type="button"
-                              onClick={() => void deleteOrder(o.id)}
-                              title="Delete order"
-                              className="flex size-8 items-center justify-center rounded-lg border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors"
-                            >
-                              <Trash2 className="size-3.5" />
-                            </button>
-                          )}
+
+                          <div className='flex items-center gap-4'>
+                            <div>
+                              {/* Soft delete — admin + super_admin */}
+                              {canSoftDelete && (
+                                <button
+                                  type="button"
+                                  onClick={() => void softDeleteOrder(o.id)}
+                                  title="Archive order"
+                                  className="flex items-center gap-2 rounded-full border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors px-3 py-1"
+                                >
+                                  <Archive className="size-3.5" /> Delete
+                                </button>
+                              )}
+                            </div>
+
+                            <div>
+                              {/* Hard delete — super_admin only */}
+                              {canDelete && (
+                                <button
+                                  type="button"
+                                  onClick={() => void deleteOrder(o.id)}
+                                  title="Permanently delete order"
+                                  className="flex items-center gap-2 rounded-full border border-red-500/20 text-red-400 hover:bg-red-500/10 transition-colors px-3 py-1"
+                                >
+                                  <Trash2 className="size-3.5" /> Delete
+                                </button>
+                              )}
+                              </div>
+                          </div>
                         </div>
                       )}
                     </td>

@@ -3,7 +3,8 @@ import { useAuthContext } from '@/context/useAuthContext';
 
 export default function OrdersPage() {
   const { user } = useAuthContext();
-  const canDelete = user?.role === 'super_admin';
+  const canSoftDelete = user?.role === 'admin' || user?.role === 'super_admin';
+  const canDelete     = user?.role === 'super_admin';
 
   return (
     <div className="p-6 space-y-4">
@@ -11,11 +12,13 @@ export default function OrdersPage() {
         <h1 className="text-xl font-semibold text-foreground">Orders</h1>
         <p className="text-sm text-muted-foreground mt-0.5">
           {canDelete
-            ? 'Update order status or delete orders.'
-            : 'Update order status.'}
+            ? 'Update order status, archive, or permanently delete orders.'
+            : canSoftDelete
+              ? 'Update order status or archive orders.'
+              : 'Update order status.'}
         </p>
       </div>
-      <OrdersTable canDelete={canDelete} />
+      <OrdersTable canSoftDelete={canSoftDelete} canDelete={canDelete} />
     </div>
   );
 }
