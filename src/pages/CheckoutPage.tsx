@@ -719,9 +719,10 @@ export default function CheckoutPage() {
   const [serverError, setServerError]     = useState<string | null>(null);
 
   // Resolve product from URL — default to womens if param is missing/invalid
+  const productParam = searchParams.get('product');
   const productKey: ProductKey =
-    (searchParams.get('product') as ProductKey | null) in PRODUCTS
-      ? (searchParams.get('product') as ProductKey)
+    productParam !== null && productParam in PRODUCTS
+      ? (productParam as ProductKey)
       : 'womens';
   const product = PRODUCTS[productKey];
 
