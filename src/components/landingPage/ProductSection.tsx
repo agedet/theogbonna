@@ -43,7 +43,7 @@ export default function ProductSection() {
           >
             <div>
               <h2 className="mb-3 font-serif text-2xl text-white sm:mb-4 sm:text-3xl md:text-4xl">
-                Official Asoebi Material
+                Asoebi for Women
               </h2>
               <p className="text-sm leading-relaxed text-slate-400 sm:text-base md:text-lg">
                 Honor our parents&apos; memory by adorning this premium selected fabric.
@@ -64,10 +64,10 @@ export default function ProductSection() {
                   £100 (or NGN Equivalent)
                 </span>
               </div>
-              <div className="flex flex-col gap-1 pb-1 sm:flex-row sm:items-center sm:justify-between sm:pb-2">
+              {/* <div className="flex flex-col gap-1 pb-1 sm:flex-row sm:items-center sm:justify-between sm:pb-2">
                 <span className="text-sm text-slate-300">Payment Deadline</span>
                 <span className="font-medium text-red-400">September 30, 2026</span>
-              </div>
+              </div> */}
             </div>
 
             <Button
@@ -141,10 +141,10 @@ export default function ProductSection() {
                 <span className="text-sm text-slate-300">Price</span>
                 <span className="text-lg font-bold text-amber-500 sm:text-xl">£10 (or NGN Equivalent)</span>
               </div>
-              <div className="flex flex-col gap-1 pb-1 sm:flex-row sm:items-center sm:justify-between sm:pb-2">
+              {/* <div className="flex flex-col gap-1 pb-1 sm:flex-row sm:items-center sm:justify-between sm:pb-2">
                 <span className="text-sm text-slate-300">Payment Deadline</span>
                 <span className="font-medium text-red-400">September 30, 2026</span>
-              </div>
+              </div> */}
             </div>
 
             <Button

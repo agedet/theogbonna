@@ -834,9 +834,9 @@ export default function CheckoutPage() {
             </AnimatePresence>
           </div>
 
-          <p className="text-center text-xs text-red-400/70 mt-8">
+          {/* <p className="text-center text-xs text-red-400/70 mt-8">
             Payment deadline: <strong className="text-red-400">September 30, 2026</strong>
-          </p>
+          </p> */}
         </div>
       </main>
     </div>
